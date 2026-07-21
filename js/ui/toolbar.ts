@@ -12,9 +12,9 @@ class Toolbar
     /** Reference to the generate random phrase button */
     private readonly btnGenerate : HTMLButtonElement;
     /** Reference to the save state button */
-    private readonly btnSave     : HTMLButtonElement;
+    public  readonly btnSave     : HTMLButtonElement;
     /** Reference to the recall state button */
-    private readonly btnRecall   : HTMLButtonElement;
+    public  readonly btnRecall   : HTMLButtonElement;
     /** Reference to the settings button */
     public  readonly btnOption   : HTMLButtonElement;
 
@@ -147,36 +147,16 @@ class Toolbar
         RAG.config.clickedGenerate = true;
     }
 
-    /** Handles the save button, persisting the current train state to storage */
+    /** Handles the save button, opening the state picker in save mode */
     private handleSave() : void
     {
-        try
-        {
-            let css = 'font-size: large; font-weight: bold;';
-            let raw = JSON.stringify(RAG.state);
-            window.localStorage.setItem('state', raw);
-
-            console.log(L.STATE_COPY_PASTE, css);
-            console.log("RAG.load('", raw.replace("'", "\\'"), "')");
-            console.log(L.STATE_RAW_JSON, css);
-            console.log(raw);
-
-            RAG.views.marquee.set(L.STATE_TO_STORAGE);
-        }
-        catch (e)
-        {
-            RAG.views.marquee.set( L.STATE_SAVE_FAIL(e.message) );
-        }
+        RAG.views.statePicker.open('save');
     }
 
-    /** Handles the load button, loading train state from storage, if it exists */
+    /** Handles the load button, opening the state picker in load mode */
     private handleLoad() : void
     {
-        let data = window.localStorage.getItem('state');
-
-        return data
-            ? RAG.load(data)
-            : RAG.views.marquee.set(L.STATE_SAVE_MISSING);
+        RAG.views.statePicker.open('load');
     }
 
     /** Handles the settings button, opening the settings screen */

@@ -22,7 +22,7 @@ class Config extends ConfigBase<Config>
     /** Whether to use the VOX engine */
     public voxEnabled      : boolean = true;
     /** Relative or absolute URL of the VOX voice to use */
-    public voxPath         : string  = 'https://roycurtis.github.io/RAG-VOX-Roy';
+    public voxPath         : string  = 'https://zzz-creator.github.io/RAG-VOX-Roy';
 
     /** Choice of speech voice to use as voice name, or '' if unset */
     private _speechVoice : string = '';

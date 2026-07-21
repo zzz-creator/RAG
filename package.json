@@ -1,7 +1,7 @@
 {
   "name": "rag",
   "description": "Generates National Rail-style announcements",
-  "repository": "https://github.com/RoyCurtis/RAG",
+  "repository": "https://github.com/zzz-creator/RAG",
   "license": "MIT",
   "version": "0.0.1",
   "dependencies": {},

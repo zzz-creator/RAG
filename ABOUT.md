@@ -58,8 +58,8 @@ Obviously, I am not a lawyer, but I hope this text makes it clear enough that th
 a hobby of mine, with zero commercial intent. Please enjoy, and thanks!
 
 [0]:  https://roycurtis.com
-[1]:  https://github.com/RoyCurtis/RAG/blob/master/LICENSE.md
-[2]:  https://github.com/RoyCurtis/RAG
+[1]:  https://github.com/zzz-creator/RAG/blob/master/LICENSE.md
+[2]:  https://github.com/zzz-creator/RAG
 [3]:  https://www.typescriptlang.org/
 [4]:  http://stylus-lang.com/
 [5]:  https://www.jetbrains.com/webstorm/

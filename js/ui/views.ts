@@ -13,6 +13,8 @@ class Views
     public  readonly marquee    : Marquee;
     /** Reference to the main settings screen */
     public  readonly settings   : Settings;
+    /** Reference to the state picker screen */
+    public  readonly statePicker: StatePicker;
     /** Reference to the main toolbar component */
     public  readonly toolbar    : Toolbar;
     /** References to all the pickers, one for each type of XML element */
@@ -25,6 +27,7 @@ class Views
         this.editor     = new Editor();
         this.marquee    = new Marquee();
         this.settings   = new Settings();
+        this.statePicker = new StatePicker();
         this.toolbar    = new Toolbar();
         this.pickers    = {};
 

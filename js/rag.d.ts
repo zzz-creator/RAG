@@ -27,28 +27,6 @@ declare class I18n {
     private static replace;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** UI element for toggling the state of collapsible editor elements */
-declare class CollapseToggle {
-    /** Reference to the toggle button DOM template to clone */
-    private static TEMPLATE;
-    /** Creates and detaches the template on first create */
-    private static init;
-    /** Creates and attaches toggle element for toggling collapsibles */
-    static createAndAttach(parent: Element): void;
-    /** Updates the given collapse toggle's title text, depending on state */
-    static update(span: HTMLElement): void;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** UI element for opening the picker for phraseset editor elements */
-declare class PhrasesetButton {
-    /** Reference to the phraseset button DOM template to clone */
-    private static TEMPLATE;
-    /** Creates and detaches the template on first create */
-    private static init;
-    /** Creates and attaches a button for the given phraseset element */
-    static createAndAttach(phraseset: Element): void;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Delegate type for chooser select event handlers */
 declare type SelectDelegate = (entry: HTMLElement) => void;
 /** UI element with a filterable and keyboard navigable list of choices */
@@ -123,6 +101,28 @@ declare class Chooser {
     protected owns(target: HTMLElement): boolean;
     /** Whether the given element is a choosable one owned by this chooser */
     protected isChoice(target?: HTMLElement): boolean;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** UI element for toggling the state of collapsible editor elements */
+declare class CollapseToggle {
+    /** Reference to the toggle button DOM template to clone */
+    private static TEMPLATE;
+    /** Creates and detaches the template on first create */
+    private static init;
+    /** Creates and attaches toggle element for toggling collapsibles */
+    static createAndAttach(parent: Element): void;
+    /** Updates the given collapse toggle's title text, depending on state */
+    static update(span: HTMLElement): void;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** UI element for opening the picker for phraseset editor elements */
+declare class PhrasesetButton {
+    /** Reference to the phraseset button DOM template to clone */
+    private static TEMPLATE;
+    /** Creates and detaches the template on first create */
+    private static init;
+    /** Creates and attaches a button for the given phraseset element */
+    static createAndAttach(phraseset: Element): void;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /**
@@ -753,6 +753,66 @@ interface SpeechSettings {
     rate?: number;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+declare type VoxKey = string | number;
+/** Synthesizes speech by dynamically loading and piecing together voice files */
+declare class VoxEngine {
+    /** List of impulse responses that come with RAG */
+    static readonly REVERBS: Dictionary<string>;
+    /** The core audio context that handles audio effects and playback */
+    private readonly audioContext;
+    /** Audio node that amplifies or attenuates voice */
+    private readonly gainNode;
+    /** Audio node that applies the tannoy filter */
+    private readonly filterNode;
+    /**
+     * Cache of impulse responses reverb nodes, for reverb. This used to be a dictionary
+     * of AudioBuffers, but ConvolverNodes cannot have their buffers changed.
+     */
+    private readonly impulses;
+    /** Relative path to fetch impulse response and chime files from */
+    private readonly dataPath;
+    /** Event handler for when speech has audibly begun */
+    onspeak?: () => void;
+    /** Event handler for when speech has ended */
+    onstop?: () => void;
+    /** Whether this engine is currently running and speaking */
+    isSpeaking: boolean;
+    /** Whether this engine has begun speaking for a current speech */
+    private begunSpeaking;
+    /** Reference number for the current pump timer */
+    private pumpTimer;
+    /** Tracks the audio context's wall-clock time to schedule next clip */
+    private nextBegin;
+    /** References to currently pending requests, as a FIFO queue */
+    private pendingReqs;
+    /** References to currently scheduled audio buffers */
+    private scheduledBuffers;
+    /** List of vox IDs currently being run through */
+    private currentIds?;
+    /** Speech settings currently being used */
+    private currentSettings?;
+    /** Reverb node currently being used */
+    private currentReverb?;
+    constructor(dataPath?: string);
+    /**
+     * Begins loading and speaking a set of vox files. Stops any speech.
+     *
+     * @param ids List of vox ids to load as files, in speaking order
+     * @param settings Voice settings to use
+     */
+    speak(ids: VoxKey[], settings: SpeechSettings): void;
+    /** Stops playing any currently spoken speech and resets state */
+    stop(): void;
+    /**
+     * Pumps the speech queue, by keeping up to 10 fetch requests for voice files going,
+     * and then feeding their data (in enforced order) to the audio chain, one at a time.
+     */
+    private pump;
+    private schedule;
+    private createReverb;
+    private setReverb;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Represents a request for a vox file, immediately begun on creation */
 declare class VoxRequest {
     /** Relative remote path of this voice file request */
@@ -915,6 +975,28 @@ declare class Settings extends ViewBase {
     private handleVoiceTest;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Controller for the state save/load picker dialog */
+declare class StatePicker extends ViewBase {
+    private readonly inputNumber;
+    private readonly pWarning;
+    private readonly btnAction;
+    private readonly btnDelete;
+    private readonly btnCancel;
+    private readonly domList;
+    private mode;
+    private states;
+    constructor();
+    private loadStates;
+    private saveStates;
+    open(mode: 'save' | 'load'): void;
+    private refreshList;
+    close(ev?: Event): void;
+    private layout;
+    private handleInput;
+    private handleAction;
+    private handleDelete;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the top toolbar */
 declare class Toolbar {
     /** Reference to the container for the toolbar */
@@ -926,9 +1008,9 @@ declare class Toolbar {
     /** Reference to the generate random phrase button */
     private readonly btnGenerate;
     /** Reference to the save state button */
-    private readonly btnSave;
+    readonly btnSave: HTMLButtonElement;
     /** Reference to the recall state button */
-    private readonly btnRecall;
+    readonly btnRecall: HTMLButtonElement;
     /** Reference to the settings button */
     readonly btnOption: HTMLButtonElement;
     constructor();
@@ -940,9 +1022,9 @@ declare class Toolbar {
     private handleStop;
     /** Handles the generate button, generating new random state and phrase */
     private handleGenerate;
-    /** Handles the save button, persisting the current train state to storage */
+    /** Handles the save button, opening the state picker in save mode */
     private handleSave;
-    /** Handles the load button, loading train state from storage, if it exists */
+    /** Handles the load button, opening the state picker in load mode */
     private handleLoad;
     /** Handles the settings button, opening the settings screen */
     private handleOption;
@@ -960,6 +1042,8 @@ declare class Views {
     readonly marquee: Marquee;
     /** Reference to the main settings screen */
     readonly settings: Settings;
+    /** Reference to the state picker screen */
+    readonly statePicker: StatePicker;
     /** Reference to the main toolbar component */
     readonly toolbar: Toolbar;
     /** References to all the pickers, one for each type of XML element */
@@ -970,6 +1054,13 @@ declare class Views {
     /** Handle ESC to close pickers or settigns */
     private onInput;
 }
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Asserts that the given value exists; neither undefined nor null */
+declare function assert<T>(value: T): T;
+/** Asserts that the given value exists and is a number */
+declare function assertNumber(value: number): void;
+/** Creates an assertion error that begins the stack at the assert's call site  */
+declare function AssertError(message: any, caller: Function): Error;
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Utility methods for dealing with collapsible elements */
 declare class Collapsibles {
@@ -1516,70 +1607,3 @@ declare class State {
      */
     genDefaultState(): void;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-declare type VoxKey = string | number;
-/** Synthesizes speech by dynamically loading and piecing together voice files */
-declare class VoxEngine {
-    /** List of impulse responses that come with RAG */
-    static readonly REVERBS: Dictionary<string>;
-    /** The core audio context that handles audio effects and playback */
-    private readonly audioContext;
-    /** Audio node that amplifies or attenuates voice */
-    private readonly gainNode;
-    /** Audio node that applies the tannoy filter */
-    private readonly filterNode;
-    /**
-     * Cache of impulse responses reverb nodes, for reverb. This used to be a dictionary
-     * of AudioBuffers, but ConvolverNodes cannot have their buffers changed.
-     */
-    private readonly impulses;
-    /** Relative path to fetch impulse response and chime files from */
-    private readonly dataPath;
-    /** Event handler for when speech has audibly begun */
-    onspeak?: () => void;
-    /** Event handler for when speech has ended */
-    onstop?: () => void;
-    /** Whether this engine is currently running and speaking */
-    isSpeaking: boolean;
-    /** Whether this engine has begun speaking for a current speech */
-    private begunSpeaking;
-    /** Reference number for the current pump timer */
-    private pumpTimer;
-    /** Tracks the audio context's wall-clock time to schedule next clip */
-    private nextBegin;
-    /** References to currently pending requests, as a FIFO queue */
-    private pendingReqs;
-    /** References to currently scheduled audio buffers */
-    private scheduledBuffers;
-    /** List of vox IDs currently being run through */
-    private currentIds?;
-    /** Speech settings currently being used */
-    private currentSettings?;
-    /** Reverb node currently being used */
-    private currentReverb?;
-    constructor(dataPath?: string);
-    /**
-     * Begins loading and speaking a set of vox files. Stops any speech.
-     *
-     * @param ids List of vox ids to load as files, in speaking order
-     * @param settings Voice settings to use
-     */
-    speak(ids: VoxKey[], settings: SpeechSettings): void;
-    /** Stops playing any currently spoken speech and resets state */
-    stop(): void;
-    /**
-     * Pumps the speech queue, by keeping up to 10 fetch requests for voice files going,
-     * and then feeding their data (in enforced order) to the audio chain, one at a time.
-     */
-    private pump;
-    private schedule;
-    private createReverb;
-    private setReverb;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Asserts that the given value exists; neither undefined nor null */
-declare function assert<T>(value: T): T;
-/** Asserts that the given value exists and is a number */
-declare function assertNumber(value: number): void;
-/** Creates an assertion error that begins the stack at the assert's call site  */
-declare function AssertError(message: any, caller: Function): Error;

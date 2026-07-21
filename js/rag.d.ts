@@ -978,6 +978,8 @@ declare class Settings extends ViewBase {
 /** Controller for the state save/load picker dialog */
 declare class StatePicker extends ViewBase {
     private readonly inputNumber;
+    private readonly inputName;
+    private readonly domPreview;
     private readonly pWarning;
     private readonly btnAction;
     private readonly btnDelete;
@@ -992,7 +994,9 @@ declare class StatePicker extends ViewBase {
     private refreshList;
     close(ev?: Event): void;
     private layout;
+    private handleNameInput;
     private handleInput;
+    private previewStateText;
     private handleAction;
     private handleDelete;
 }

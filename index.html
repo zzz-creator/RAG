@@ -232,7 +232,7 @@
     <header></header>
 
     <form>
-      <input title="%P_PLAT_NUMBER_T%" min="0" max="99" type="number">
+      <input title="%P_PLAT_NUMBER_T%" min="0" max="60" type="number">
 
       <select title="%P_PLAT_LETTER_T%">
         <option value=""></option>
@@ -299,9 +299,16 @@
         <input id="statePickerValue" type="number" min="1" step="1" required
           style="width: 100%; font-size: 1.2em; padding: 5px; box-sizing: border-box;" />
 
+        <label for="statePickerName">State Name:</label>
+        <input id="statePickerName" type="text" placeholder="Optional Name"
+          style="width: 100%; font-size: 1.2em; padding: 5px; box-sizing: border-box;" />
+
         <div style="font-size: 0.9em; margin-bottom: 5px;">Saved States:</div>
-        <ul id="statePickerList" style="list-style-type: none; padding: 0; margin: 0; max-height: 150px; overflow-y: auto; border: 1px solid #555; background: #222;">
+        <ul id="statePickerList" style="list-style-type: none; padding: 0; margin: 0; max-height: 100px; overflow-y: auto; border: 1px solid #555; background: #222;">
         </ul>
+        
+        <div style="font-size: 0.9em; margin-bottom: 5px;">State Preview:</div>
+        <pre id="statePickerPreview" style="margin: 0; max-height: 100px; overflow-y: auto; font-size: 0.8em; background: #111; padding: 5px; border: 1px solid #444; color: #ddd;"></pre>
 
         <p id="statePickerWarning" style="color: #ffaa00; margin: 0; font-size: 0.9em;" hidden>
           Warning: State already exists and will be overwritten!

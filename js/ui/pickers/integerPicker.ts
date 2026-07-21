@@ -54,6 +54,15 @@ class IntegerPicker extends Picker
             this.domLabel.innerText = '';
 
         this.domHeader.innerText = L.HEADER_INTEGER(this.currentCtx);
+        
+        if (this.currentCtx === 'coaches') {
+            this.inputDigit.min = '0';
+            this.inputDigit.max = '60';
+        } else {
+            this.inputDigit.removeAttribute('min');
+            this.inputDigit.removeAttribute('max');
+        }
+        
         this.inputDigit.value    = value.toString();
         this.inputDigit.focus();
     }
@@ -63,13 +72,19 @@ class IntegerPicker extends Picker
     {
         // Can't use valueAsNumber due to iOS input type workarounds
         let int    = parseInt(this.inputDigit.value);
-        let intStr = (this.words)
-            ? L.DIGITS[int] || int.toString()
-            : int.toString();
-
+        
         // Ignore invalid values
         if ( isNaN(int) )
             return;
+            
+        if (this.currentCtx === 'coaches') {
+            if (int < 0) { int = 0; this.inputDigit.value = '0'; }
+            if (int > 60) { int = 60; this.inputDigit.value = '60'; }
+        }
+
+        let intStr = (this.words)
+            ? L.DIGITS[int] || int.toString()
+            : int.toString();
 
         this.domLabel.innerText = '';
 

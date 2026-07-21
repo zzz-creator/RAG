@@ -6,6 +6,8 @@
 class StatePicker extends ViewBase
 {
     private readonly inputNumber  : HTMLInputElement;
+    private readonly inputName    : HTMLInputElement;
+    private readonly domPreview   : HTMLElement;
     private readonly pWarning     : HTMLElement;
     private readonly btnAction    : HTMLButtonElement;
     private readonly btnDelete    : HTMLButtonElement;
@@ -13,13 +15,15 @@ class StatePicker extends ViewBase
     private readonly domList      : HTMLUListElement;
 
     private mode: 'save' | 'load' = 'save';
-    private states: { [key: number]: string } = {};
+    private states: { [key: number]: { name: string, data: string } } = {};
 
     public constructor()
     {
         super('#statePicker');
 
         this.inputNumber = this.attach<HTMLInputElement>('#statePickerValue');
+        this.inputName   = this.attach<HTMLInputElement>('#statePickerName');
+        this.domPreview  = this.attach<HTMLElement>('#statePickerPreview');
         this.pWarning    = this.attach<HTMLElement>('#statePickerWarning');
         this.btnAction   = this.attach<HTMLButtonElement>('#btnStateAction');
         this.btnDelete   = this.attach<HTMLButtonElement>('#btnStateDelete');
@@ -30,6 +34,7 @@ class StatePicker extends ViewBase
         this.btnDelete.onclick = this.handleDelete.bind(this);
         this.btnCancel.onclick = this.close.bind(this);
         this.inputNumber.oninput = this.handleInput.bind(this);
+        this.inputName.oninput = this.handleNameInput.bind(this);
         
         // Load initial states from localStorage
         this.loadStates();
@@ -39,7 +44,16 @@ class StatePicker extends ViewBase
         let raw = window.localStorage.getItem('states');
         if (raw) {
             try {
-                this.states = JSON.parse(raw);
+                let parsed = JSON.parse(raw);
+                this.states = {};
+                for (let key in parsed) {
+                    let val = parsed[key];
+                    if (typeof val === 'string') {
+                        this.states[parseInt(key)] = { name: `State ${key}`, data: val };
+                    } else {
+                        this.states[parseInt(key)] = val;
+                    }
+                }
             } catch (e) {
                 this.states = {};
             }
@@ -57,6 +71,8 @@ class StatePicker extends ViewBase
         this.loadStates();
         this.mode = mode;
         this.inputNumber.value = '';
+        this.inputName.value = '';
+        this.domPreview.innerText = '';
         this.pWarning.hidden = true;
         
         if (this.mode === 'save') {
@@ -93,8 +109,10 @@ class StatePicker extends ViewBase
         }
 
         keys.forEach(key => {
+            let stateObj = this.states[key];
+            let name = stateObj.name || `State ${key}`;
             let li = document.createElement('li');
-            li.innerText = `State ${key}`;
+            li.innerText = `${key}: ${name}`;
             li.style.padding = '5px';
             li.style.cursor = 'pointer';
             li.style.borderBottom = '1px solid #444';
@@ -138,17 +156,29 @@ class StatePicker extends ViewBase
         this.dom.style.zIndex = '9999';
     }
 
+    private handleNameInput(): void {
+        // Just trigger input handler if in save mode, as name affects nothing in load
+    }
+
     private handleInput(): void {
         let val = parseInt(this.inputNumber.value);
         if (isNaN(val) || val < 1) {
             this.btnAction.disabled = true;
             this.btnDelete.hidden = true;
             this.pWarning.hidden = true;
+            this.domPreview.innerText = '';
             return;
         }
         
-        let exists = (this.states[val] !== undefined);
+        let stateObj = this.states[val];
+        let exists = (stateObj !== undefined);
         this.btnDelete.hidden = !exists;
+        
+        if (exists) {
+            this.domPreview.innerText = this.previewStateText(stateObj.data);
+        } else {
+            this.domPreview.innerText = '';
+        }
         
         if (this.mode === 'save') {
             this.btnAction.disabled = false;
@@ -168,6 +198,24 @@ class StatePicker extends ViewBase
         }
     }
 
+    private previewStateText(stateJson: string): string {
+        try {
+            let oldState = RAG.state;
+            RAG.state = Object.assign(new State(), JSON.parse(stateJson)) as State;
+            
+            let tempDom = document.createElement('div');
+            tempDom.innerHTML = '<phraseset ref="root" />';
+            RAG.phraser.process(tempDom);
+            let compiledText = DOM.getCleanedVisibleText(tempDom);
+            
+            RAG.state = oldState;
+            
+            return compiledText;
+        } catch (e) {
+            return "Error compiling preview: " + e.message;
+        }
+    }
+
     private handleAction(ev: Event): void {
         ev.preventDefault();
         let val = parseInt(this.inputNumber.value);
@@ -175,7 +223,11 @@ class StatePicker extends ViewBase
         
         if (this.mode === 'save') {
             try {
-                this.states[val] = JSON.stringify(RAG.state);
+                let name = this.inputName.value.trim() || `State ${val}`;
+                this.states[val] = {
+                    name: name,
+                    data: JSON.stringify(RAG.state)
+                };
                 this.saveStates();
                 RAG.views.marquee.set(`Saved to State ${val}`);
                 this.close();
@@ -183,9 +235,9 @@ class StatePicker extends ViewBase
                 RAG.views.marquee.set( L.STATE_SAVE_FAIL(e.message) );
             }
         } else {
-            let data = this.states[val];
-            if (data) {
-                RAG.load(data);
+            let stateObj = this.states[val];
+            if (stateObj && stateObj.data) {
+                RAG.load(stateObj.data);
                 this.close();
             }
         }

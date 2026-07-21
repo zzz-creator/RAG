@@ -41,9 +41,13 @@ class PlatformPicker extends Picker
     /** Updates the platform element and state currently being edited */
     protected onChange(_: Event) : void
     {
+        let intVal = parseInt(this.inputDigit.value);
         // Ignore invalid values
-        if ( isNaN( parseInt(this.inputDigit.value) ) )
+        if ( isNaN( intVal ) )
             return;
+            
+        if (intVal < 0) { intVal = 0; this.inputDigit.value = '0'; }
+        if (intVal > 60) { intVal = 60; this.inputDigit.value = '60'; }
 
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
 

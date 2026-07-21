@@ -318,6 +318,8 @@ declare class PlatformPicker extends Picker {
     open(target: HTMLElement): void;
     /** Updates the platform element and state currently being edited */
     protected onChange(_: Event): void;
+    /** Hides and clears the letter selector if platform number is > 26 */
+    private updateLetterVisibility;
     protected onClick(_: MouseEvent): void;
     protected onInput(_: KeyboardEvent): void;
 }

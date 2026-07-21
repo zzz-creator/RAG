@@ -35,6 +35,7 @@ class PlatformPicker extends Picker
 
         this.inputDigit.value  = value[0];
         this.inputLetter.value = value[1];
+        this.updateLetterVisibility();
         this.inputDigit.focus();
     }
 
@@ -49,9 +50,24 @@ class PlatformPicker extends Picker
         if (intVal < 0) { intVal = 0; this.inputDigit.value = '0'; }
         if (intVal > 60) { intVal = 60; this.inputDigit.value = '60'; }
 
+        this.updateLetterVisibility();
+
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
 
         RAG.views.editor.setElementsText( 'platform', RAG.state.platform.join('') );
+    }
+
+    /** Hides and clears the letter selector if platform number is > 26 */
+    private updateLetterVisibility() : void
+    {
+        let intVal = parseInt(this.inputDigit.value);
+        let hide   = isNaN(intVal) || intVal > 26;
+
+        this.inputLetter.hidden   = hide;
+        if (hide)
+        {
+            this.inputLetter.value    = '';
+        }
     }
 
     protected onClick(_: MouseEvent)    : void { /* no-op */ }

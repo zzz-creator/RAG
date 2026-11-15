@@ -1,4 +1,4 @@
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 
 /** Union type for iterable types with a .length property */
 type Lengthable = Array<any> | NodeList | HTMLCollection | string;

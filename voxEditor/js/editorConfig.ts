@@ -1,4 +1,4 @@
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 
 /** Holds vox editor runtime configuration */
 export class EditorConfig extends ConfigBase<EditorConfig>

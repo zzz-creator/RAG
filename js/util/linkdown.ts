@@ -1,4 +1,4 @@
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 
 /** A very small subset of Markdown for hyperlinking a block of text */
 class Linkdown

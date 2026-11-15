@@ -1,8 +1,8 @@
 /**
  * This file uses code from audiobuffer-to-wav, which adapted the code from Recorder.js.
- * By Matt DesLauriers and Matt Diamond. MIT license. Ported to TypeScript by Roy Curtis.
+ * By Matt DesLauriers and Matt Diamond. MIT license. Ported to TypeScript by zzz-creator.
  *
- * Rail Announcements Generator. By Roy Curtis, MIT license, 2018
+ * Rail Announcements Generator. By zzz-creator, MIT license, 2018
  */
 
 import Mp3Encoder = lamejs.Mp3Encoder;

@@ -1,4 +1,4 @@
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 
 // Global methods for asserting the existence of values. To keep the chance of errors
 // within asserts low, no localization is used here.

@@ -1,4 +1,4 @@
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 
 /** Represents context data for a phrase, to be passed to an element processor */
 interface PhraseContext

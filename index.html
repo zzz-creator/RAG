@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Roy Curtis 2018, MIT license -->
+<!-- zzz-creator 2018, MIT license -->
 <html lang="en">
 
 <head>
@@ -40,23 +40,15 @@
 
     <!-- Toolbar of RAG operations -->
     <menu id="toolbar">
-      <button tabindex="1" id="btnPlay" title="%TOOLBAR_PLAY%">
-        <svg>
-          <use xlink:href="css/icons/icoMoon.svg#icon-play"></use>
-        </svg>
-      </button>
-
-      <button tabindex="1" id="btnStop" hidden title="%TOOLBAR_STOP%">
-        <svg>
-          <use xlink:href="css/icons/icoMoon.svg#icon-stop"></use>
-        </svg>
-      </button>
-
       <button tabindex="1" id="btnShuffle" title="%TOOLBAR_SHUFFLE%">
         <svg>
           <use xlink:href="css/icons/icoMoon.svg#icon-shuffle"></use>
         </svg>
       </button>
+
+      <button tabindex="1" id="btnDashboard" title="Open the scenario dashboard in a new tab">Dashboard</button>
+      <button tabindex="1" id="btnScenario" title="Capture current announcement as a new scenario step">Capture Step</button>
+      <button tabindex="1" id="btnUpdateStep" title="Update selected scenario step with current announcement">Update Step</button>
 
       <button tabindex="1" id="btnSave" title="%TOOLBAR_SAVE%">
         <svg>
@@ -239,6 +231,7 @@
         <option value="A">A</option>
         <option value="B">B</option>
         <option value="C">C</option>
+        <option value="M">3/4</option>
       </select>
     </form>
   </div>
@@ -351,6 +344,7 @@
     </svg>
   </button>
 
+  <div id="scenarioDashboard" hidden></div>
 </body>
 
 <scripts>

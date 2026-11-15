@@ -1,5 +1,5 @@
 /// <reference path="vendor/draggable.d.ts" />
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Global reference to the language container, set at init */
 declare let L: EnglishLanguage;
 declare class I18n {
@@ -26,7 +26,7 @@ declare class I18n {
     /** Replaces key with value if it exists, else keeps the key */
     private static replace;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Delegate type for chooser select event handlers */
 declare type SelectDelegate = (entry: HTMLElement) => void;
 /** UI element with a filterable and keyboard navigable list of choices */
@@ -102,7 +102,7 @@ declare class Chooser {
     /** Whether the given element is a choosable one owned by this chooser */
     protected isChoice(target?: HTMLElement): boolean;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** UI element for toggling the state of collapsible editor elements */
 declare class CollapseToggle {
     /** Reference to the toggle button DOM template to clone */
@@ -114,7 +114,7 @@ declare class CollapseToggle {
     /** Updates the given collapse toggle's title text, depending on state */
     static update(span: HTMLElement): void;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** UI element for opening the picker for phraseset editor elements */
 declare class PhrasesetButton {
     /** Reference to the phraseset button DOM template to clone */
@@ -124,7 +124,7 @@ declare class PhrasesetButton {
     /** Creates and attaches a button for the given phraseset element */
     static createAndAttach(phraseset: Element): void;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /**
  * Singleton instance of the station picker. Since there are expected to be 2500+
  * stations, this element would take up a lot of memory and generate a lot of DOM. So, it
@@ -152,7 +152,7 @@ declare class StationChooser extends Chooser {
     /** Populates the chooser with the given station code */
     private addStation;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Station list item that can be dragged and dropped */
 declare class StationListItem {
     /** Reference to the DOM template to clone, for each item created */
@@ -168,7 +168,7 @@ declare class StationListItem {
      */
     constructor(code: string);
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Base class for picker views */
 declare abstract class Picker {
     /** Reference to this picker's DOM element */
@@ -215,7 +215,7 @@ declare abstract class Picker {
     /** Returns true if an element in this picker currently has focus */
     hasFocus(): boolean;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the coach picker dialog */
 declare class CoachPicker extends Picker {
     /** Reference to this picker's letter drop-down input control */
@@ -230,7 +230,7 @@ declare class CoachPicker extends Picker {
     protected onClick(_: MouseEvent): void;
     protected onInput(_: KeyboardEvent): void;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the excuse picker dialog */
 declare class ExcusePicker extends Picker {
     /** Reference to this picker's chooser control */
@@ -247,7 +247,7 @@ declare class ExcusePicker extends Picker {
     /** Handles chooser selection by updating the excuse element and state */
     private onSelect;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the integer picker dialog */
 declare class IntegerPicker extends Picker {
     /** Reference to this picker's numerical input spinner */
@@ -270,7 +270,7 @@ declare class IntegerPicker extends Picker {
     protected onClick(_: MouseEvent): void;
     protected onInput(_: KeyboardEvent): void;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the named train picker dialog */
 declare class NamedPicker extends Picker {
     /** Reference to this picker's chooser control */
@@ -287,7 +287,7 @@ declare class NamedPicker extends Picker {
     /** Handles chooser selection by updating the named element and state */
     private onSelect;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the phraseset picker dialog */
 declare class PhrasesetPicker extends Picker {
     /** Reference to this picker's chooser control */
@@ -306,7 +306,7 @@ declare class PhrasesetPicker extends Picker {
     /** Handles chooser selection by updating the phraseset element and state */
     private onSelect;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the platform picker dialog */
 declare class PlatformPicker extends Picker {
     /** Reference to this picker's numerical input spinner */
@@ -323,7 +323,7 @@ declare class PlatformPicker extends Picker {
     protected onClick(_: MouseEvent): void;
     protected onInput(_: KeyboardEvent): void;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the service picker dialog */
 declare class ServicePicker extends Picker {
     /** Reference to this picker's chooser control */
@@ -342,7 +342,7 @@ declare class ServicePicker extends Picker {
     /** Handles chooser selection by updating the service element and state */
     private onSelect;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the station picker dialog */
 declare class StationPicker extends Picker {
     /** Reference to this picker's shared station chooser control */
@@ -363,7 +363,7 @@ declare class StationPicker extends Picker {
     /** Handles chooser selection by updating the station element and state */
     private onSelectStation;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the station list picker dialog */
 declare class StationListPicker extends StationPicker {
     /** Reference to this picker's container for the list control */
@@ -413,7 +413,7 @@ declare class StationListPicker extends StationPicker {
     /** Updates the station list element and state currently being edited */
     private update;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the time picker dialog */
 declare class TimePicker extends Picker {
     /** Reference to this picker's time input control */
@@ -428,7 +428,7 @@ declare class TimePicker extends Picker {
     protected onClick(_: MouseEvent): void;
     protected onInput(_: KeyboardEvent): void;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Base class for configuration objects, that can save, load, and reset themselves */
 declare abstract class ConfigBase<T extends ConfigBase<T>> {
     /** localStorage key where config is expected to be stored */
@@ -443,7 +443,7 @@ declare abstract class ConfigBase<T extends ConfigBase<T>> {
     /** Safely deletes this configuration from localStorage and resets state */
     reset(): void;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Holds runtime configuration for RAG */
 declare class Config extends ConfigBase<Config> {
     /** If user has clicked shuffle at least once */
@@ -479,7 +479,153 @@ declare class Config extends ConfigBase<Config> {
     voxReverb: string;
     constructor(autoLoad?: boolean);
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
+interface DashBranch {
+    condition: string;
+    /** Meaning depends on condition: delay minutes, random percent, hour, platform text, service text */
+    threshold?: number | string;
+    /** Legacy: same as threshold for the random condition */
+    probability?: number;
+    target: number | 'end' | string;
+    /** Optional human label for the branch; unused by the runner */
+    label?: string;
+}
+interface DashStep {
+    type: 'announcement' | 'wait';
+    stateJson?: string;
+    gapMs: number;
+    waitSeconds?: number;
+    label?: string;
+    /** Ordered branches (if / elif): first match wins, none matching falls through (else) */
+    branches?: DashBranch[];
+    /** Legacy single branch; migrated to branches[] on load */
+    branch?: DashBranch;
+}
+interface DashScenario {
+    id: string;
+    name: string;
+    steps: DashStep[];
+    loopCount: number;
+    createdAt: number;
+    updatedAt: number;
+}
+/** One selectable branch condition, and how its threshold input should read */
+interface DashBranchSpec {
+    id: string;
+    label: string;
+    input: string;
+    min?: string;
+    max?: string;
+    placeholder?: string;
+}
+/** Conditions the dashboard offers, in the order they appear in the editor */
+declare const DASH_BRANCH_CONDITIONS: DashBranchSpec[];
+declare class ScenarioDashboard {
+    private storageKey;
+    private scenarios;
+    private currentId;
+    private panel;
+    private progressTextEl;
+    private progressFillEl;
+    /** Index of the step whose inline branch editor is open, or -1 when closed */
+    private branchEditorIdx;
+    /** Staged branches of the open editor (committed on "Save all") */
+    private branchEditorRows;
+    /** Condition preselected in the editor's "new branch" row */
+    private branchNewCond;
+    /** Heartbeat timer keeping the cross-tab playback lock fresh */
+    private playHeartbeat;
+    /** Inner span of the now-playing line (the scroll target) */
+    private nowPlayingSpan;
+    /** rAF handle of the running now-playing scroll, 0 when idle */
+    private nowPlayingTimer;
+    /** Current x offset (px) of the now-playing scroll */
+    private nowPlayingOffset;
+    constructor();
+    /** Shows the panel; called when this page is running in the dashboard role */
+    open(): void;
+    /**
+     * Re-reads scenarios from localStorage and re-renders. Called after
+     * anything writes the scenarios out from under this instance's in-
+     * memory copy (the toolbar's Capture/Update Step buttons, another tab).
+     */
+    refresh(): void;
+    /**
+     * Updates the "now playing" line inside the panel, scrolling the text
+     * through it like the main marquee (the panel covers #marquee, so this
+     * line is what is actually visible during playback). While a scroll is
+     * already running, new text simply swaps in without restarting, so the
+     * wait countdown ticks smoothly instead of jumping to the right edge.
+     */
+    private setNowPlaying;
+    /** One frame of the now-playing scroll */
+    private scrollNowPlaying;
+    private loadAll;
+    /**
+     * Migrate the legacy single branch onto branches[] and drop rows that
+     * are not usable at run time. Runs on load and import so the rest of
+     * the app only ever sees the ordered-list shape.
+     */
+    private normalizeStepBranches;
+    private saveAll;
+    private current;
+    /** Escapes user-entered text before it is interpolated into HTML */
+    private esc;
+    private startPlayback;
+    private stopPlayback;
+    /** Plays a single step once (announcement or wait), then stops */
+    private playStepOnly;
+    private onPlaybackEnded;
+    /**
+     * Cross-tab lock. Other tabs (the editor role) read rag.playbackActive
+     * and react to the storage event; the heartbeat keeps the lock fresh so
+     * a closed dashboard tab cannot leave the editor locked forever.
+     */
+    private setPlaybackActive;
+    private playHeartbeatTick;
+    /** Locks this tab's own main screen while a scenario is playing */
+    private setEditingEnabled;
+    private updateProgress;
+    private highlightStep;
+    render(): void;
+    private editorHtml;
+    private stepHtml;
+    /** Human-readable one-liner shown next to the step title */
+    private branchSummary;
+    /** Resolves the spec for a condition id, falling back to the first one */
+    private specFor;
+    /** Copies one branch so staged edits cannot leak into the live step */
+    private copyBranch;
+    /** Seeds the editor's staged rows from a step's branches (or one blank row) */
+    private seedBranchRows;
+    private branchEditorHtml;
+    /**
+     * Target options: "end", every step by index, and every labelled step by
+     * label. Index options are stored 0-based; label options as the label.
+     */
+    private targetOptions;
+    private bind;
+    /**
+     * Adds the live announcement as a new step. Prefers a sibling tab's state
+     * (asked for over the channel, answered by the editor role); falls back
+     * to this tab's own state when no other tab answers within 1.2s (i.e.
+     * building directly on the dashboard page).
+     */
+    private captureStep;
+    private pushStep;
+    /** Opens the editor role in a new tab with this step loaded for editing */
+    private editStep;
+    private moveStep;
+    private deleteStep;
+    /** Swaps a staged branch row with its neighbour (reorder priority) */
+    private moveBranchRow;
+    /** Validates every staged row; returns an error message or null when all are usable */
+    private branchRowsError;
+    private saveBranch;
+    private exportJson;
+    private importJson;
+}
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Language entries are template delegates */
 declare type LanguageEntry = (...parts: string[]) => string;
 /** Language definitions for English; also acts as the base language */
@@ -590,7 +736,7 @@ declare class EnglishLanguage {
     LETTERS: string;
     DIGITS: string[];
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /**
  * Holds methods for processing each type of phrase element into HTML, with data taken
  * from the current state. Each method takes a context object, holding data for the
@@ -639,7 +785,7 @@ declare class ElementProcessors {
      */
     private static wrapToInner;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Represents context data for a phrase, to be passed to an element processor */
 interface PhraseContext {
     /** Gets the XML phrase element that is being replaced */
@@ -647,7 +793,7 @@ interface PhraseContext {
     /** Gets the HTML span element that is replacing the XML element */
     newElement: HTMLSpanElement;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /**
  * Handles the transformation of phrase XML data, into HTML elements with their data
  * filled in and their UI logic wired.
@@ -661,7 +807,87 @@ declare class Phraser {
      */
     process(container: HTMLElement, level?: number): void;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
+/** One branch: a condition that, if met, jumps the run to a target */
+interface ScenarioBranch {
+    condition: 'delay' | 'random' | 'time' | 'platform' | 'service';
+    /** Meaning depends on condition: delay minutes, random percent, hour, platform text, service text */
+    threshold?: number | string;
+    /** Legacy: same as threshold for the random condition */
+    probability?: number;
+    target: number | 'end' | string;
+    /** Optional human label for the branch ("if delay >= 5"); unused by the runner */
+    label?: string;
+}
+interface ScenarioStep {
+    type: 'announcement' | 'wait';
+    stateJson?: string;
+    gapMs: number;
+    waitSeconds?: number;
+    label?: string;
+    /** Ordered branches (if / elif): the first match wins, none matching falls through (else) */
+    branches?: ScenarioBranch[];
+    /** Legacy single branch; migrated to branches[] on load, still honoured at run time */
+    branch?: ScenarioBranch;
+}
+declare class Scenario {
+    private steps;
+    private currentIndex;
+    private running;
+    private paused;
+    private timer;
+    private waitInterval;
+    /** When true, the scenario stops right after the current step (single-step play) */
+    private stopAfterStep;
+    /** Safety timer: advances the step even if the speech engine never signals completion */
+    private watchdog;
+    /** Guard so a step completes (speech end or watchdog) and advances exactly once */
+    private stepFinished;
+    private loopCount;
+    private loopsDone;
+    onStep?: (idx: number, total: number, step: ScenarioStep) => void;
+    onWaitCountdown?: (remaining: number, total: number) => void;
+    onComplete?: () => void;
+    onError?: (msg: string) => void;
+    onTextUpdate?: (text: string) => void;
+    setSteps(steps: ScenarioStep[]): void;
+    addStep(stateJson: string, gapMs?: number): void;
+    setLoopCount(n: number): void;
+    readonly stepCount: number;
+    readonly isRunning: boolean;
+    readonly isPaused: boolean;
+    exportJson(): void;
+    readonly currentLoopValue: number;
+    readonly totalLoopsValue: number;
+    clear(): void;
+    play(): void;
+    /** Plays exactly one step (its announcement, or its wait), then stops */
+    playStep(idx: number): void;
+    pause(): void;
+    stop(): void;
+    private runStep;
+    /**
+     * Completes the current step exactly once, whether it ended because the
+     * speech engine signalled completion or because the watchdog fired. Safe
+     * against the re-entrant onstop that speech.stop() can trigger: the
+     * stepFinished guard is set before speech is stopped.
+     */
+    private finishStep;
+    private advance;
+    /**
+     * Jumps the run to a branch target ('end', an index, or a label).
+     * Returns true if the jump landed; an unusable target (wrong type) makes
+     * the caller fall through to the next step instead (no stall). A label
+     * that matches no step goes to the end of the scenario.
+     */
+    private jumpTo;
+    private evalBranch;
+    /** Broadcast a playback event to the other tabs (the editor mirrors it, display-only) */
+    private broadcast;
+    /** Coerces a threshold (number or numeric string) to a number, else the fallback */
+    private static numThreshold;
+}
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Utility class for resolving a given phrase to vox keys */
 declare class Resolver {
     /** TreeWalker filter to reduce a walk to just the elements the resolver needs */
@@ -692,7 +918,7 @@ declare class Resolver {
     private resolveTime;
     private resolveVox;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Manages speech synthesis using both native and custom engines */
 declare class Speech {
     /** Instance of the custom voice engine */
@@ -734,7 +960,7 @@ declare class Speech {
      */
     private speakVox;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Type definition for speech config overrides passed to the speak method */
 interface SpeechSettings {
     /** Whether to force use of the VOX engine */
@@ -754,7 +980,7 @@ interface SpeechSettings {
     /** Override rate of voice */
     rate?: number;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 declare type VoxKey = string | number;
 /** Synthesizes speech by dynamically loading and piecing together voice files */
 declare class VoxEngine {
@@ -814,7 +1040,7 @@ declare class VoxEngine {
     private createReverb;
     private setReverb;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Represents a request for a vox file, immediately begun on creation */
 declare class VoxRequest {
     /** Relative remote path of this voice file request */
@@ -843,7 +1069,7 @@ declare class VoxRequest {
     /** Called if the fetch or decode stages fail */
     private onError;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Base class for a view; anything with a base DOM element */
 declare abstract class ViewBase {
     /** Reference to this view's primary DOM element */
@@ -853,7 +1079,7 @@ declare abstract class ViewBase {
     /** Gets this view's child element matching the given query */
     protected attach<T extends HTMLElement>(query: string): T;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the disclaimer screen */
 declare class Disclaimer extends ViewBase {
     /** Reference to the "continue" button */
@@ -866,7 +1092,7 @@ declare class Disclaimer extends ViewBase {
     /** Persists the dismissal to storage and restores the main screen */
     private onDismiss;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the phrase editor */
 declare class Editor {
     /** Reference to the DOM container for the editor */
@@ -923,7 +1149,7 @@ declare class Editor {
      */
     private openPicker;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the scrolling marquee */
 declare class Marquee {
     /** Reference to the marquee's DOM element */
@@ -937,10 +1163,17 @@ declare class Marquee {
     constructor();
     /** Sets the message on the scrolling marquee, and starts animating it */
     set(msg: string, animate?: boolean): void;
+    /**
+     * Swap in new text without restarting the scroll. While the marquee is
+     * already scrolling, the new text takes over in place (used for wait
+     * countdown ticks, so they don't jump back to the right edge every
+     * second); otherwise it behaves like a fresh set().
+     */
+    setSoft(msg: string): void;
     /** Stops the current marquee animation */
     stop(): void;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the settings screen */
 declare class Settings extends ViewBase {
     private readonly btnReset;
@@ -976,7 +1209,7 @@ declare class Settings extends ViewBase {
     /** Handles the speech test button, speaking a test phrase */
     private handleVoiceTest;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Controller for the state save/load picker dialog */
 declare class StatePicker extends ViewBase {
     private readonly inputNumber;
@@ -1002,40 +1235,50 @@ declare class StatePicker extends ViewBase {
     private handleAction;
     private handleDelete;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Controller for the top toolbar */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
+/**
+ * Controller for the top toolbar.
+ *
+ * The toolbar differs per page: the editor page (index.html) has no run button
+ * because playback is controlled from the dashboard; the dashboard page
+ * (dashboard.html) runs scenarios from its own panel. Buttons that are not
+ * present on a given page are looked up optionally and simply not wired.
+ */
 declare class Toolbar {
-    /** Reference to the container for the toolbar */
     private readonly dom;
-    /** Reference to the play button */
     private readonly btnPlay;
-    /** Reference to the stop button */
     private readonly btnStop;
-    /** Reference to the generate random phrase button */
     private readonly btnGenerate;
-    /** Reference to the save state button */
     readonly btnSave: HTMLButtonElement;
-    /** Reference to the recall state button */
     readonly btnRecall: HTMLButtonElement;
-    /** Reference to the settings button */
     readonly btnOption: HTMLButtonElement;
+    private readonly btnDashboard;
+    private readonly btnScenario;
+    private readonly btnUpdateStep;
     constructor();
-    /** Handles the play button, playing the editor's current phrase with speech */
+    /** Looks up a toolbar button that is legitimately absent on some pages */
+    private static optional;
+    /** Plays the current announcement through the speech engine */
     private handlePlay;
-    /** Continuation of handlePlay, executed after a delay */
     private handlePlay2;
-    /** Handles the stop button, stopping the marquee and any speech */
     private handleStop;
-    /** Handles the generate button, generating new random state and phrase */
     private handleGenerate;
-    /** Handles the save button, opening the state picker in save mode */
     private handleSave;
-    /** Handles the load button, opening the state picker in load mode */
     private handleLoad;
-    /** Handles the settings button, opening the settings screen */
     private handleOption;
+    /**
+     * Captures the current announcement as a new step in the active scenario.
+     * The active scenario lives in localStorage (shared with the dashboard);
+     * if none is active yet, a fresh one is created and made active.
+     */
+    private handleCaptureStep;
+    /**
+     * Writes the current announcement back into the selected scenario step
+     * (the one opened for editing from the dashboard).
+     */
+    private handleUpdateStep;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Manages UI elements and their logic */
 declare class Views {
     /** Reference to the main screen */
@@ -1060,14 +1303,14 @@ declare class Views {
     /** Handle ESC to close pickers or settigns */
     private onInput;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Asserts that the given value exists; neither undefined nor null */
 declare function assert<T>(value: T): T;
 /** Asserts that the given value exists and is a number */
 declare function assertNumber(value: number): void;
 /** Creates an assertion error that begins the stack at the assert's call site  */
 declare function AssertError(message: any, caller: Function): Error;
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Utility methods for dealing with collapsible elements */
 declare class Collapsibles {
     /**
@@ -1078,10 +1321,10 @@ declare class Collapsibles {
      */
     static set(span: HTMLElement, state: boolean): void;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Sugar for choosing second value if first is undefined, instead of falsy */
 declare function either<T>(value: T | undefined, value2: T): T;
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Utility methods for dealing with the DOM */
 declare class DOM {
     /** Whether the window is thinner than a specific size (and, thus, is "mobile") */
@@ -1209,7 +1452,7 @@ declare class DOM {
      */
     static toggleHiddenAll(...list: [HTMLElement, boolean?][]): void;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** A very small subset of Markdown for hyperlinking a block of text */
 declare class Linkdown {
     /** Regex pattern for matching linked text */
@@ -1231,13 +1474,13 @@ declare class Linkdown {
      */
     private static parse;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Utility methods for parsing data from strings */
 declare class Parse {
     /** Parses a given string into a boolean */
     static boolean(str: string): boolean;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Utility methods for generating random data */
 declare class Random {
     /**
@@ -1261,7 +1504,7 @@ declare class Random {
      */
     static bool(chance?: number): boolean;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Utility class for audio functionality */
 declare class Sounds {
     /**
@@ -1273,7 +1516,7 @@ declare class Sounds {
      */
     static decode(context: AudioContext, buffer: ArrayBuffer): Promise<AudioBuffer>;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Utility methods for dealing with strings */
 declare class Strings {
     /** Checks if the given string is null, or empty (whitespace only or zero-length) */
@@ -1300,7 +1543,7 @@ declare class Strings {
     /** Gets the first match of a pattern in a string, or undefined if not found */
     static firstMatch(text: string, pattern: RegExp, idx: number): string | undefined;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Union type for iterable types with a .length property */
 declare type Lengthable = Array<any> | NodeList | HTMLCollection | string;
 /** Represents a platform as a digit and optional letter tuple */
@@ -1372,7 +1615,17 @@ interface MediaTrackConstraintSet {
     noiseSuppression?: boolean | ConstrainBooleanParameters;
 }
 declare function registerProcessor(name: string, ctor: AudioWorkletProcessor): void;
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
+/** Cross-window communication channel using BroadcastChannel */
+declare class ScenarioChannel {
+    private channel;
+    private listeners;
+    constructor();
+    on(type: string, handler: (data: any) => void): void;
+    off(type: string, handler: (data: any) => void): void;
+    send(type: string, payload?: any): void;
+}
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Manages data for excuses, trains, services and stations */
 declare class Database {
     /** Loaded dataset of delay or cancellation excuses */
@@ -1439,7 +1692,7 @@ declare class Database {
      */
     pickStationCodes(min?: number, max?: number, exclude?: string[]): string[];
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Main class of the entire Rail Announcements Generator application */
 declare class RAG {
     /** Gets the configuration container */
@@ -1454,12 +1707,40 @@ declare class RAG {
     static state: State;
     /** Gets the view controller, which manages UI interaction */
     static views: Views;
+    /** Gets the scenario runner, which chains announcements into a sequence */
+    static scenario: Scenario;
+    /** Gets the scenario dashboard controller */
+    static dashboard: ScenarioDashboard;
+    /** Cross-window messaging channel */
+    static channel: ScenarioChannel;
     /**
      * Entry point for RAG, to be called from Javascript.
      *
      * @param dataRefs Configuration object, with rail data to use
      */
     static main(dataRefs: DataRefs): void;
+    /** True when this page was opened as the dashboard (controller) view */
+    private static isDashboardRole;
+    /**
+     * Editor role: if the dashboard asked to edit a specific step, load that
+     * step's announcement into the editor and point "Update Step" at it.
+     */
+    private static applyEditRequest;
+    /**
+     * Editor role: pause editing while a scenario is playing in another tab.
+     * The dashboard tab sets rag.playbackActive; we react to it live.
+     */
+    private static bindPlaybackGate;
+    /**
+     * Editor role: mirror a step the dashboard is running into the marquee.
+     * Display-only on purpose: the dashboard tab owns the audio, and speaking
+     * here too would double the voice.
+     */
+    private static mirrorStep;
+    /** Register channel handlers for the main screen (index.html) */
+    private static registerChannelHandlers;
+    /** Notify external listeners (dashboard) that the current state in editor changed */
+    static notifyStateChanged(): void;
     /** Generates a new random phrase and state */
     static generate(): void;
     /** Loads state from given JSON */
@@ -1467,7 +1748,7 @@ declare class RAG {
     /** Global error handler; throws up a big red panic screen on uncaught error */
     private static panic;
 }
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Disposable class that holds state for the current schedule, train, etc. */
 declare class State {
     /** State of collapsible elements. Key is reference ID, value is collapsed. */

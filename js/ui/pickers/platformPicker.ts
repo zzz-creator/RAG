@@ -1,4 +1,4 @@
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 
 /// <reference path="picker.ts"/>
 
@@ -46,15 +46,21 @@ class PlatformPicker extends Picker
         // Ignore invalid values
         if ( isNaN( intVal ) )
             return;
-            
+
         if (intVal < 0) { intVal = 0; this.inputDigit.value = '0'; }
         if (intVal > 60) { intVal = 60; this.inputDigit.value = '60'; }
 
         this.updateLetterVisibility();
 
+        // 'M' (9¾) is only valid for platform 9
+        if (intVal !== 9 && this.inputLetter.value === 'M')
+            this.inputLetter.value = '';
+
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
 
-        RAG.views.editor.setElementsText( 'platform', RAG.state.platform.join('') );
+        RAG.views.editor.setElementsText( 'platform', (RAG.state.platform[1] === 'M')
+            ? RAG.state.platform[0] + '¾'
+            : RAG.state.platform.join('') );
     }
 
     /** Hides and clears the letter selector if platform number is > 26 */
@@ -67,6 +73,16 @@ class PlatformPicker extends Picker
         if (hide)
         {
             this.inputLetter.value    = '';
+        }
+
+        // Only platform 9 has a "9¾" (M) pronunciation
+        let mOption = this.inputLetter.querySelector('option[value="M"]') as HTMLOptionElement;
+        if (mOption)
+        {
+            mOption.hidden   = !(intVal === 9);
+            mOption.disabled = !(intVal === 9);
+            if (intVal !== 9 && this.inputLetter.value === 'M')
+                this.inputLetter.value = '';
         }
     }
 

@@ -1,73 +1,81 @@
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 
-/** Controller for the top toolbar */
+/**
+ * Controller for the top toolbar.
+ *
+ * The toolbar differs per page: the editor page (index.html) has no run button
+ * because playback is controlled from the dashboard; the dashboard page
+ * (dashboard.html) runs scenarios from its own panel. Buttons that are not
+ * present on a given page are looked up optionally and simply not wired.
+ */
 class Toolbar
 {
-    /** Reference to the container for the toolbar */
     private readonly dom         : HTMLElement;
-    /** Reference to the play button */
-    private readonly btnPlay     : HTMLButtonElement;
-    /** Reference to the stop button */
-    private readonly btnStop     : HTMLButtonElement;
-    /** Reference to the generate random phrase button */
+    private readonly btnPlay     : HTMLButtonElement | null;
+    private readonly btnStop     : HTMLButtonElement | null;
     private readonly btnGenerate : HTMLButtonElement;
-    /** Reference to the save state button */
     public  readonly btnSave     : HTMLButtonElement;
-    /** Reference to the recall state button */
     public  readonly btnRecall   : HTMLButtonElement;
-    /** Reference to the settings button */
     public  readonly btnOption   : HTMLButtonElement;
+    private readonly btnDashboard : HTMLButtonElement | null;
+    private readonly btnScenario  : HTMLButtonElement;
+    private readonly btnUpdateStep : HTMLButtonElement | null;
 
     public constructor()
     {
         this.dom         = DOM.require('#toolbar');
-        this.btnPlay     = DOM.require('#btnPlay');
-        this.btnStop     = DOM.require('#btnStop');
+        this.btnPlay     = Toolbar.optional('#btnPlay');
+        this.btnStop     = Toolbar.optional('#btnStop');
         this.btnGenerate = DOM.require('#btnShuffle');
         this.btnSave     = DOM.require('#btnSave');
         this.btnRecall   = DOM.require('#btnLoad');
         this.btnOption   = DOM.require('#btnSettings');
+        this.btnDashboard = Toolbar.optional('#btnDashboard');
+        this.btnScenario  = DOM.require('#btnScenario');
+        this.btnUpdateStep = Toolbar.optional('#btnUpdateStep');
 
-        this.btnPlay.onclick     = this.handlePlay.bind(this);
-        this.btnStop.onclick     = this.handleStop.bind(this);
+        if (this.btnPlay) this.btnPlay.onclick     = this.handlePlay.bind(this);
+        if (this.btnStop) this.btnStop.onclick     = this.handleStop.bind(this);
         this.btnGenerate.onclick = this.handleGenerate.bind(this);
         this.btnSave.onclick     = this.handleSave.bind(this);
         this.btnRecall.onclick   = this.handleLoad.bind(this);
         this.btnOption.onclick   = this.handleOption.bind(this);
+        if (this.btnDashboard) this.btnDashboard.onclick = () => window.open('index.html?dashboard=1', '_blank');
+        this.btnScenario.onclick = this.handleCaptureStep.bind(this);
+        if (this.btnUpdateStep) this.btnUpdateStep.onclick = this.handleUpdateStep.bind(this);
 
-        // Add throb class if the generate button hasn't been clicked before
         if (!RAG.config.clickedGenerate)
         {
             this.btnGenerate.classList.add('throb');
             this.btnGenerate.focus();
         }
-        else
+        else if (this.btnPlay)
             this.btnPlay.focus();
     }
 
-    /** Handles the play button, playing the editor's current phrase with speech */
+    /** Looks up a toolbar button that is legitimately absent on some pages */
+    private static optional(sel: string) : HTMLButtonElement | null
+    {
+        return (document.querySelector(sel) as HTMLButtonElement | null) || null;
+    }
+
+    /** Plays the current announcement through the speech engine */
     private handlePlay() : void
     {
         RAG.speech.stop();
-        this.btnPlay.disabled = true;
-
-        // Has to execute on a delay, otherwise native speech cancel becomes unreliable
+        if (this.btnPlay) this.btnPlay.disabled = true;
         window.setTimeout(this.handlePlay2.bind(this), 200);
     }
 
-    /** Continuation of handlePlay, executed after a delay */
     private handlePlay2() : void
     {
-        let hasSpoken         = false;
-        let speechText        = RAG.views.editor.getText();
-        this.btnPlay.hidden   = true;
-        this.btnPlay.disabled = false;
-        this.btnStop.hidden   = false;
+        let hasSpoken   = false;
+        let speechText  = RAG.views.editor.getText();
+        if (this.btnPlay) { this.btnPlay.hidden = true; this.btnPlay.disabled = false; }
+        if (this.btnStop)  this.btnStop.hidden = false;
 
-        // TODO: Localize
         RAG.views.marquee.set('Loading VOX...', false);
 
-        // If speech takes too long (10 seconds) to load, cancel it
         let timeout = window.setTimeout(() =>
         {
             clearTimeout(timeout);
@@ -78,7 +86,6 @@ class Toolbar
         {
             clearTimeout(timeout);
             RAG.views.marquee.set(speechText);
-
             hasSpoken          = true;
             RAG.speech.onspeak = undefined;
         };
@@ -87,81 +94,96 @@ class Toolbar
         {
             clearTimeout(timeout);
             this.handleStop();
-
-            // Check if anything was actually spoken. If not, something went wrong.
             if (!hasSpoken && RAG.config.voxEnabled)
             {
                 RAG.config.voxEnabled = false;
-
-                // TODO: Localize
-                alert(
-                    'It appears that the VOX engine was unable to say anything.'   +
-                    ' Either the current voice path is unreachable, or the engine' +
-                    ' crashed. Please check the console. The VOX engine has been'  +
-                    ' disabled and native text-to-speech will be used on next play.'
-                );
+                alert('It appears that the VOX engine was unable to say anything. The VOX engine has been disabled and native text-to-speech will be used on next play.');
             }
             else if (!hasSpoken)
-                alert(
-                    'It appears that the browser was unable to say anything.'        +
-                    ' Either the current voice failed to load, or this browser does' +
-                    ' not support support text-to-speech. Please check the console.'
-                );
-
-            // Since the marquee would have been stuck on "Loading...", scroll it
+                alert('It appears that the browser was unable to say anything. Please check the console.');
             if (!hasSpoken)
                 RAG.views.marquee.set(speechText);
         };
 
-        RAG.speech.speak( RAG.views.editor.getPhrase() );
-        this.btnStop.focus();
+        RAG.speech.speak(RAG.views.editor.getPhrase());
+        if (this.btnStop) this.btnStop.focus();
     }
 
-    /** Handles the stop button, stopping the marquee and any speech */
     private handleStop(ev?: Event) : void
     {
         RAG.speech.onspeak  = undefined;
         RAG.speech.onstop   = undefined;
-        this.btnPlay.hidden = false;
-
-        // Only focus play button if user didn't move focus elsewhere. Prevents
-        // annoying surprise of focus suddenly shifting away.
-        if (document.activeElement === this.btnStop)
+        if (this.btnPlay) this.btnPlay.hidden = false;
+        if (this.btnStop && this.btnPlay && document.activeElement === this.btnStop)
             this.btnPlay.focus();
-
-        this.btnStop.hidden = true;
-
+        if (this.btnStop) this.btnStop.hidden = true;
         RAG.speech.stop();
-
-        // If event exists, this stop was called by the user
         if (ev)
             RAG.views.marquee.set(RAG.views.editor.getText(), false);
     }
 
-    /** Handles the generate button, generating new random state and phrase */
     private handleGenerate() : void
     {
-        // Remove the call-to-action throb from initial load
         this.btnGenerate.classList.remove('throb');
         RAG.generate();
         RAG.config.clickedGenerate = true;
     }
 
-    /** Handles the save button, opening the state picker in save mode */
-    private handleSave() : void
+    private handleSave() : void { RAG.views.statePicker.open('save'); }
+    private handleLoad() : void { RAG.views.statePicker.open('load'); }
+    private handleOption() : void { RAG.views.settings.open(); }
+
+    /**
+     * Captures the current announcement as a new step in the active scenario.
+     * The active scenario lives in localStorage (shared with the dashboard);
+     * if none is active yet, a fresh one is created and made active.
+     */
+    private handleCaptureStep() : void
     {
-        RAG.views.statePicker.open('save');
+        let raw = localStorage.getItem('rag.scenarios');
+        let scenarios : any[] = raw ? (JSON.parse(raw) as any[]) : [];
+        let id = localStorage.getItem('rag.currentScenarioId');
+        let sc = scenarios.find((s: any) => s.id === id);
+
+        if (!sc)
+        {
+            id = 'scn_' + Date.now();
+            sc = { id: id, name: 'Scenario ' + (scenarios.length + 1), steps: [], loopCount: 1, createdAt: Date.now(), updatedAt: Date.now() };
+            scenarios.push(sc);
+            localStorage.setItem('rag.currentScenarioId', id);
+        }
+
+        sc.steps.push({ type: 'announcement', stateJson: JSON.stringify(RAG.state), gapMs: 1500 });
+        sc.updatedAt = Date.now();
+        localStorage.setItem('rag.scenarios', JSON.stringify(scenarios));
+        if (RAG.dashboard)
+            RAG.dashboard.refresh();
+        RAG.views.marquee.set('Captured step ' + sc.steps.length + ' into "' + sc.name + '"');
     }
 
-    /** Handles the load button, opening the state picker in load mode */
-    private handleLoad() : void
+    /**
+     * Writes the current announcement back into the selected scenario step
+     * (the one opened for editing from the dashboard).
+     */
+    private handleUpdateStep() : void
     {
-        RAG.views.statePicker.open('load');
-    }
+        let id = localStorage.getItem('rag.currentScenarioId');
+        let idxStr = localStorage.getItem('rag.selectedStepIndex');
+        if (!id || idxStr === null) { alert('No scenario/step selected. Open the dashboard and click a step first.'); return; }
 
-    /** Handles the settings button, opening the settings screen */
-    private handleOption() : void
-    {
-        RAG.views.settings.open();
+        let idx = parseInt(idxStr);
+        let raw = localStorage.getItem('rag.scenarios');
+        if (!raw) { alert('No scenarios saved yet.'); return; }
+
+        let scenarios = JSON.parse(raw) as any[];
+        let sc = scenarios.find((s: any) => s.id === id);
+        if (!sc || !sc.steps[idx]) { alert('Step not found.'); return; }
+
+        sc.steps[idx].stateJson = JSON.stringify(RAG.state);
+        sc.updatedAt = Date.now();
+        localStorage.setItem('rag.scenarios', JSON.stringify(scenarios));
+        if (RAG.dashboard)
+            RAG.dashboard.refresh();
+        RAG.views.marquee.set('Updated step ' + (idx + 1) + ' in "' + sc.name + '"');
     }
 }

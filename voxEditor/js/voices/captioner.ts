@@ -1,4 +1,4 @@
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 
 /** Represents a dictionary of voice keys and their captions */
 export type PhraseCaptions = {[id: string] : string};

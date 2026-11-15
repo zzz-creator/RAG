@@ -1,4 +1,4 @@
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 
 /** Controller for the scrolling marquee */
 class Marquee
@@ -48,6 +48,23 @@ class Marquee
         };
 
         window.requestAnimationFrame(anim);
+    }
+
+    /**
+     * Swap in new text without restarting the scroll. While the marquee is
+     * already scrolling, the new text takes over in place (used for wait
+     * countdown ticks, so they don't jump back to the right edge every
+     * second); otherwise it behaves like a fresh set().
+     */
+    public setSoft(msg: string) : void
+    {
+        if (this.timer !== 0)
+        {
+            this.domSpan.textContent = msg;
+            return;
+        }
+
+        this.set(msg);
     }
 
     /** Stops the current marquee animation */

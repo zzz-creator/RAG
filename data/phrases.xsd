@@ -9,7 +9,7 @@
     This schema describes how the RAG phrases data is structured, to help validation.
     I have written a lot of comments here, because XSD can be confusing and verbose.
 
-    Schema by Roy Curtis, 2018, MIT licensed.
+    Schema by zzz-creator, 2018, MIT licensed.
   </xs:documentation>
 </xs:annotation>
 

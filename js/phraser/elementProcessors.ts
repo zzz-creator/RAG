@@ -1,4 +1,4 @@
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 
 /**
  * Holds methods for processing each type of phrase element into HTML, with data taken
@@ -118,7 +118,9 @@ class ElementProcessors
     public static platform(ctx: PhraseContext)
     {
         ctx.newElement.title       = L.TITLE_PLATFORM;
-        ctx.newElement.textContent = RAG.state.platform.join('');
+        ctx.newElement.textContent = (RAG.state.platform[1] === 'M')
+            ? RAG.state.platform[0] + '¾'
+            : RAG.state.platform.join('');
         ctx.newElement.tabIndex    = 1;
     }
 

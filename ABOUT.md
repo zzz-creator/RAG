@@ -1,4 +1,4 @@
-Rail Announcement Generator; built by [Roy Curtis][0] in 2018, under the [MIT license][1].
+Rail Announcement Generator; built by [zzz-creator][0] in 2018, under the [MIT license][1].
 
 [Source code for this application is freely available and forkable on GitHub][2].
 

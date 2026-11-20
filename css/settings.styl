@@ -8,7 +8,9 @@
   overflow-x    hidden
   overflow-y    auto
   position      absolute
-  z-index       500
+  // Above the dashboard panel (z-500), which is later in the DOM and
+  // would otherwise paint over the settings opened from it
+  z-index       600
 
   > *
     margin    0 auto

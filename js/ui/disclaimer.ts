@@ -29,12 +29,14 @@ class Disclaimer extends ViewBase
         this.btnDismiss.focus();
     }
 
-    /** Persists the dismissal to storage and restores the main screen */
+    /** Persists the dismissal to storage and restores the view underneath */
     private onDismiss() : void
     {
         RAG.config.readDisclaimer = true;
         this.dom.hidden           = true;
-        RAG.views.main.hidden     = false;
+        // Dashboard role: the editor view stays hidden — the panel is what
+        // shows. Screen role: restore the marquee editor.
+        RAG.views.main.hidden     = RAG.isDashboardRole();
         this.btnDismiss.onclick   = null;
         RAG.config.save();
 

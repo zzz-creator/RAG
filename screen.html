@@ -45,36 +45,29 @@
       Is Javascript enabled?
     </div>
 
-    <!-- Toolbar of RAG operations -->
+    <!-- Toolbar of the step editor view -->
     <menu id="toolbar">
+      <button tabindex="1" id="btnPlay" title="%TOOLBAR_PLAY%">
+        <svg>
+          <use xlink:href="css/icons/icoMoon.svg#icon-play"></use>
+        </svg>
+      </button>
+
+      <button tabindex="1" id="btnStop" title="%TOOLBAR_STOP%" hidden>
+        <svg>
+          <use xlink:href="css/icons/icoMoon.svg#icon-stop"></use>
+        </svg>
+      </button>
+
       <button tabindex="1" id="btnShuffle" title="%TOOLBAR_SHUFFLE%">
         <svg>
           <use xlink:href="css/icons/icoMoon.svg#icon-shuffle"></use>
         </svg>
       </button>
 
-      <button tabindex="1" id="btnScenario" title="Capture current announcement as a new scenario step">Capture Step</button>
       <button tabindex="1" id="btnUpdateStep" title="Update selected scenario step with current announcement">Update Step</button>
 
-      <button tabindex="1" id="btnSave" title="%TOOLBAR_SAVE%">
-        <svg>
-          <use xlink:href="css/icons/icoMoon.svg#icon-save"></use>
-        </svg>
-      </button>
-
-      <button tabindex="1" id="btnLoad" title="%TOOLBAR_LOAD%">
-        <svg>
-          <use xlink:href="css/icons/icoMoon.svg#icon-recall"></use>
-        </svg>
-      </button>
-
-      <button tabindex="1" id="btnSettings" title="%TOOLBAR_SETTINGS%">
-        <svg>
-          <use xlink:href="css/icons/icoMoon.svg#icon-settings"></use>
-        </svg>
-      </button>
-
-      <button tabindex="1" id="btnDashboard" title="Close the step editor, or open the announcement display in a new tab">Dashboard</button>
+      <button tabindex="1" id="btnClose" title="%TOOLBAR_CLOSE%">✕</button>
     </menu>
 
     <!-- The phrase editor -->
@@ -289,38 +282,6 @@
 
     <form>
       <input id="timePickerValue" type="time" title="%P_TIME_T%" pattern="[0-9]{2}:[0-9]{2}" required>
-    </form>
-  </div>
-
-  <div id="statePicker" hidden class="picker modal">
-    <header></header>
-    <form>
-      <div style="padding: 10px; display: flex; flex-direction: column; gap: 10px;">
-        <label for="statePickerValue">State #:</label>
-        <input id="statePickerValue" type="number" min="1" step="1" required
-          style="width: 100%; font-size: 1.2em; padding: 5px; box-sizing: border-box;" />
-
-        <label for="statePickerName">State Name:</label>
-        <input id="statePickerName" type="text" placeholder="Optional Name"
-          style="width: 100%; font-size: 1.2em; padding: 5px; box-sizing: border-box;" />
-
-        <div style="font-size: 0.9em; margin-bottom: 5px;">Saved States:</div>
-        <ul id="statePickerList" style="list-style-type: none; padding: 0; margin: 0; max-height: 100px; overflow-y: auto; border: 1px solid #555; background: #222;">
-        </ul>
-        
-        <div style="font-size: 0.9em; margin-bottom: 5px;">State Preview:</div>
-        <pre id="statePickerPreview" style="margin: 0; max-height: 100px; overflow-y: auto; font-size: 0.8em; background: #111; padding: 5px; border: 1px solid #444; color: #ddd;"></pre>
-
-        <p id="statePickerWarning" style="color: #ffaa00; margin: 0; font-size: 0.9em;" hidden>
-          Warning: State already exists and will be overwritten!
-        </p>
-
-        <menu style="margin: 0; padding: 0; display: flex; gap: 10px;">
-          <button id="btnStateAction" tabindex="50" style="flex-grow: 1;">Action</button>
-          <button id="btnStateDelete" tabindex="50" style="background-color: #800;">Delete</button>
-          <button id="btnStateCancel" tabindex="50">Cancel</button>
-        </menu>
-      </div>
     </form>
   </div>
 

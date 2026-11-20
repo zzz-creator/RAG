@@ -20,12 +20,6 @@ class EnglishLanguage
     // State
 
     STATE_FROM_STORAGE  = 'State has been loaded from storage.';
-    STATE_TO_STORAGE    = 'State has been saved to storage, and dumped to console.';
-    STATE_COPY_PASTE    = '%cCopy and paste this in console to load later:';
-    STATE_RAW_JSON      = '%cRaw JSON state:';
-    STATE_SAVE_MISSING  = 'Sorry, no state was found in storage.';
-    STATE_SAVE_FAIL     = (msg: string) =>
-        `Sorry, state could not be saved to storage: ${msg}`;
     STATE_BAD_PHRASESET = (r: string) =>
         `Attempted to get chosen index for phraseset (${r}) that doesn't exist.`;
 
@@ -50,9 +44,8 @@ class EnglishLanguage
     TOOLBAR_PLAY     = 'Play phrase';
     TOOLBAR_STOP     = 'Stop playing phrase';
     TOOLBAR_SHUFFLE  = 'Generate random phrase';
-    TOOLBAR_SAVE     = 'Save state to storage';
-    TOOLBAR_LOAD     = 'Recall state from storage';
     TOOLBAR_SETTINGS = 'Open settings';
+    TOOLBAR_CLOSE    = 'Close the editor and return to the scenario dashboard';
 
     // Editor
 

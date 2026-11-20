@@ -13,8 +13,6 @@ class Views
     public  readonly marquee    : Marquee;
     /** Reference to the main settings screen */
     public  readonly settings   : Settings;
-    /** Reference to the state picker screen */
-    public  readonly statePicker: StatePicker;
     /** Reference to the main toolbar component */
     public  readonly toolbar    : Toolbar;
     /** References to all the pickers, one for each type of XML element */
@@ -27,7 +25,6 @@ class Views
         this.editor     = new Editor();
         this.marquee    = new Marquee();
         this.settings   = new Settings();
-        this.statePicker = new StatePicker();
         this.toolbar    = new Toolbar();
         this.pickers    = {};
 
@@ -60,11 +57,9 @@ class Views
 
     /**
      * Handle ESC: closes an open picker or the settings screen. With nothing
-     * else open, in the dashboard role it returns from the full-screen editor
-     * (the edit modal) to the dashboard panel — one layer per press, so
-     * dismissing a picker does not close the modal with it. The `editing`
-     * flag distinguishes the modal from #dashClose's deliberate "Hide panel",
-     * which ESC must not undo.
+     * else open, in the dashboard role it asks to leave the step editor view
+     * — the dashboard confirms first if there are unsaved changes. One layer
+     * per press, so dismissing a picker does not leave the editor with it.
      */
     private onInput(ev: KeyboardEvent) : void
     {
@@ -78,6 +73,6 @@ class Views
         this.settings.close();
 
         if (!layerOpen && RAG.isDashboardRole() && RAG.dashboard && RAG.dashboard.editing)
-            RAG.dashboard.closeEdit();
+            RAG.dashboard.requestClose();
     }
 }

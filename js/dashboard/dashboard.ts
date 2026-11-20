@@ -23,8 +23,10 @@ class ScenarioDashboard
     private storageKey = 'rag.scenarios';
     private scenarios: DashScenario[] = [];
     private currentId: string | null = null;
-    /** True while the edit modal is open. Distinguishes it from #dashClose, which also hides the panel — ESC must only close the modal, not undo a deliberate "Hide panel" */
+    /** True while the step editor view is open (a step is being edited) */
     public editing = false;
+    /** Serialized state as it was when editing began; null when not editing. Differs from the live state while the editor is dirty */
+    private editSnapshot: string | null = null;
     private panel: HTMLElement;
     private progressTextEl: HTMLElement | null = null;
     private progressFillEl: HTMLElement | null = null;
@@ -91,35 +93,74 @@ class ScenarioDashboard
         this.render();
     }
 
-    /** Shows the panel; called when this page is running in the dashboard role */
+    /**
+     * Shows the dashboard view — panel up, editor hidden. Called at boot
+     * when this page is running in the dashboard role: the dashboard is
+     * the default entry view, and the editor appears only on Edit.
+     */
     public open(): void
     {
-        this.panel.hidden = false;
+        this.showDashboard();
         this.render();
     }
 
     /**
-     * Opens the in-page edit modal: hides the panel so the phrase editor on
-     * this same dashboard page is revealed full-screen. The panel's Play/
-     * Stop are the only speech triggers, so the voice is never doubled.
+     * Opens the step editor view: hides the panel so the phrase editor on
+     * this same dashboard page is revealed with its toolbar. The panel's
+     * Play/Stop are the scenario triggers; the toolbar's Play/Stop speak
+     * the single announcement being edited.
      */
     public openEdit(): void
     {
-        this.editing = true;
-        this.panel.hidden = true;
+        this.showEditor();
     }
 
     /**
-     * Closes the in-page edit modal: re-shows the panel and re-reads the
-     * scenarios so any Capture/Update made from the editor is reflected.
-     * Safe to call when the panel is merely hidden via #dashClose: it just
-     * re-shows it.
+     * Closes the step editor view: re-shows the dashboard panel and
+     * re-reads the scenarios so anything saved from the editor is
+     * reflected.
      */
     public closeEdit(): void
     {
-        this.editing = false;
-        this.panel.hidden = false;
+        this.showDashboard();
         this.refresh();
+    }
+
+    /**
+     * Close request from the editor's ✕ button or ESC: closes straight
+     * away if the step being edited has no unsaved changes, and asks the
+     * user first otherwise — closing would discard what they changed.
+     */
+    public requestClose(): void
+    {
+        if (this.isDirty() && !confirm('Discard unsaved changes?'))
+            return;
+        this.closeEdit();
+    }
+
+    /** True if the announcement in the editor differs from the state the step being edited held when it was opened */
+    public isDirty(): boolean
+    {
+        if (this.editSnapshot === null)
+            return false;
+        return JSON.stringify(RAG.state) !== this.editSnapshot;
+    }
+
+    /** Switches to the dashboard view: panel up, editor hidden */
+    private showDashboard(): void
+    {
+        this.editing = false;
+        this.editSnapshot = null;
+        this.panel.hidden = false;
+        RAG.views.main.hidden = true;
+    }
+
+    /** Switches to the step editor view: editor up, panel hidden */
+    private showEditor(): void
+    {
+        this.editing = true;
+        this.panel.hidden = true;
+        RAG.views.main.hidden = false;
     }
 
     /**
@@ -375,7 +416,8 @@ class ScenarioDashboard
         `<div class="dash">
             <h1>Scenario Dashboard</h1>
             <div class="dash-row dash-head">
-                <button id="dashClose" type="button" title="Hide the dashboard panel and show the announcement screen">Hide panel</button>
+                <button id="dashSettings" type="button" title="Open the settings screen">Settings</button>
+                <button id="dashOpenDisplay" type="button" title="Open the announcement display (screen.html) in a new tab">Open display</button>
             </div>
 
             <h2>Scenarios</h2>
@@ -471,9 +513,13 @@ class ScenarioDashboard
             });
         });
 
-        let btnClose = panel.querySelector('#dashClose') as HTMLButtonElement | null;
-        if (btnClose)
-            btnClose.onclick = () => { this.panel.hidden = true; };
+        let btnSettings = panel.querySelector('#dashSettings') as HTMLButtonElement | null;
+        if (btnSettings)
+            btnSettings.onclick = () => RAG.views.settings.open();
+
+        let btnOpenDisplay = panel.querySelector('#dashOpenDisplay') as HTMLButtonElement | null;
+        if (btnOpenDisplay)
+            btnOpenDisplay.onclick = () => window.open('screen.html', '_blank');
 
         let btnNew = panel.querySelector('#dashNew') as HTMLButtonElement | null;
         if (btnNew)
@@ -665,11 +711,11 @@ class ScenarioDashboard
     }
 
     /**
-     * Opens this step in the in-page edit modal: loads its announcement into
-     * the editor on this same dashboard page, then reveals it full-screen.
-     * "Update Step" writes back to this step — the keys set below are what
-     * it targets. No new tab, so the dashboard tab keeps owning the audio
-     * and the voice is never doubled.
+     * Opens this step in the step editor view: loads its announcement into
+     * the editor on this same dashboard page, then reveals it with its
+     * toolbar. "Update Step" writes back to this step — the keys set below
+     * are what it targets. No new tab, so the dashboard tab keeps owning
+     * the audio and the voice is never doubled.
      */
     private editStep(idx: number): void
     {
@@ -687,8 +733,11 @@ class ScenarioDashboard
         localStorage.setItem('rag.selectedStepIndex', String(idx));
 
         RAG.load(step.stateJson);
-        RAG.views.marquee.set('Editing step ' + (idx + 1) + ' of "' + s.name + '". Make your changes, then click "Update Step" to save them back.');
+        // Snapshot after load: the dirty check compares the live state
+        // against this, so the step's own state reads as clean.
+        this.editSnapshot = JSON.stringify(RAG.state);
         this.openEdit();
+        RAG.views.marquee.set('Editing step ' + (idx + 1) + ' of "' + s.name + '". Make your changes, then click "Update Step" to save them back.');
     }
 
     private moveStep(btn: HTMLElement, dir: number): void

@@ -81,8 +81,7 @@ class Settings extends ViewBase
         this.rangeSpeechRate.valueAsNumber  = RAG.config.speechRate;
 
         this.layout();
-        this.dom.hidden       = false;
-        RAG.views.main.hidden = true;
+        this.dom.hidden = false;
         this.btnSave.focus();
     }
 
@@ -91,9 +90,12 @@ class Settings extends ViewBase
     {
         this.cancelReset();
         RAG.speech.stop();
-        RAG.views.main.hidden = false;
-        this.dom.hidden       = true;
-        RAG.views.toolbar.btnOption.focus();
+        this.dom.hidden = true;
+        // Return focus to the panel button that opened us, if we were
+        // opened from the dashboard panel; the editor view has no opener.
+        let opener = document.getElementById('dashSettings') as HTMLButtonElement | null;
+        if (opener)
+            opener.focus();
     }
 
     /** Calculates form layout and control visibility based on state */

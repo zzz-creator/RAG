@@ -498,8 +498,10 @@ declare class ScenarioDashboard {
     private storageKey;
     private scenarios;
     private currentId;
-    /** True while the edit modal is open. Distinguishes it from #dashClose, which also hides the panel — ESC must only close the modal, not undo a deliberate "Hide panel" */
+    /** True while the step editor view is open (a step is being edited) */
     editing: boolean;
+    /** Serialized state as it was when editing began; null when not editing. Differs from the live state while the editor is dirty */
+    private editSnapshot;
     private panel;
     private progressTextEl;
     private progressFillEl;
@@ -510,21 +512,37 @@ declare class ScenarioDashboard {
     /** Current x offset (px) of the now-playing scroll */
     private nowPlayingOffset;
     constructor();
-    /** Shows the panel; called when this page is running in the dashboard role */
+    /**
+     * Shows the dashboard view — panel up, editor hidden. Called at boot
+     * when this page is running in the dashboard role: the dashboard is
+     * the default entry view, and the editor appears only on Edit.
+     */
     open(): void;
     /**
-     * Opens the in-page edit modal: hides the panel so the phrase editor on
-     * this same dashboard page is revealed full-screen. The panel's Play/
-     * Stop are the only speech triggers, so the voice is never doubled.
+     * Opens the step editor view: hides the panel so the phrase editor on
+     * this same dashboard page is revealed with its toolbar. The panel's
+     * Play/Stop are the scenario triggers; the toolbar's Play/Stop speak
+     * the single announcement being edited.
      */
     openEdit(): void;
     /**
-     * Closes the in-page edit modal: re-shows the panel and re-reads the
-     * scenarios so any Capture/Update made from the editor is reflected.
-     * Safe to call when the panel is merely hidden via #dashClose: it just
-     * re-shows it.
+     * Closes the step editor view: re-shows the dashboard panel and
+     * re-reads the scenarios so anything saved from the editor is
+     * reflected.
      */
     closeEdit(): void;
+    /**
+     * Close request from the editor's ✕ button or ESC: closes straight
+     * away if the step being edited has no unsaved changes, and asks the
+     * user first otherwise — closing would discard what they changed.
+     */
+    requestClose(): void;
+    /** True if the announcement in the editor differs from the state the step being edited held when it was opened */
+    isDirty(): boolean;
+    /** Switches to the dashboard view: panel up, editor hidden */
+    private showDashboard;
+    /** Switches to the step editor view: editor up, panel hidden */
+    private showEditor;
     /**
      * Re-reads scenarios from localStorage and re-renders. Called after
      * anything writes the scenarios out from under this instance's in-
@@ -573,11 +591,11 @@ declare class ScenarioDashboard {
     private captureStep;
     private pushStep;
     /**
-     * Opens this step in the in-page edit modal: loads its announcement into
-     * the editor on this same dashboard page, then reveals it full-screen.
-     * "Update Step" writes back to this step — the keys set below are what
-     * it targets. No new tab, so the dashboard tab keeps owning the audio
-     * and the voice is never doubled.
+     * Opens this step in the step editor view: loads its announcement into
+     * the editor on this same dashboard page, then reveals it with its
+     * toolbar. "Update Step" writes back to this step — the keys set below
+     * are what it targets. No new tab, so the dashboard tab keeps owning
+     * the audio and the voice is never doubled.
      */
     private editStep;
     private moveStep;
@@ -598,11 +616,6 @@ declare class EnglishLanguage {
     BAD_DIRECTION: (v: any) => string;
     BAD_BOOLEAN: (v: any) => string;
     STATE_FROM_STORAGE: string;
-    STATE_TO_STORAGE: string;
-    STATE_COPY_PASTE: string;
-    STATE_RAW_JSON: string;
-    STATE_SAVE_MISSING: string;
-    STATE_SAVE_FAIL: (msg: string) => string;
     STATE_BAD_PHRASESET: (r: string) => string;
     CONFIG_LOAD_FAIL: (msg: any) => string;
     CONFIG_SAVE_FAIL: (msg: any) => string;
@@ -614,9 +627,8 @@ declare class EnglishLanguage {
     TOOLBAR_PLAY: string;
     TOOLBAR_STOP: string;
     TOOLBAR_SHUFFLE: string;
-    TOOLBAR_SAVE: string;
-    TOOLBAR_LOAD: string;
     TOOLBAR_SETTINGS: string;
+    TOOLBAR_CLOSE: string;
     TITLE_COACH: (c: any) => string;
     TITLE_EXCUSE: string;
     TITLE_INTEGER: (c: any) => string;
@@ -1023,7 +1035,7 @@ declare class Disclaimer extends ViewBase {
     constructor();
     /** Opens the disclaimer for first time users */
     disclaim(): void;
-    /** Persists the dismissal to storage and restores the main screen */
+    /** Persists the dismissal to storage and restores the view underneath */
     private onDismiss;
 }
 /** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
@@ -1144,74 +1156,38 @@ declare class Settings extends ViewBase {
     private handleVoiceTest;
 }
 /** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
-/** Controller for the state save/load picker dialog */
-declare class StatePicker extends ViewBase {
-    private readonly inputNumber;
-    private readonly inputName;
-    private readonly domPreview;
-    private readonly pWarning;
-    private readonly btnAction;
-    private readonly btnDelete;
-    private readonly btnCancel;
-    private readonly domList;
-    private mode;
-    private states;
-    constructor();
-    private loadStates;
-    private saveStates;
-    open(mode: 'save' | 'load'): void;
-    private refreshList;
-    close(ev?: Event): void;
-    private layout;
-    private handleNameInput;
-    private handleInput;
-    private previewStateText;
-    private handleAction;
-    private handleDelete;
-}
-/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /**
- * Controller for the top toolbar.
+ * Controller for the top toolbar of the step editor view: Play, Stop,
+ * Shuffle (regenerate), Update Step, and Close.
  *
- * The toolbar differs per page: the terminal page (index.html) runs
- * scenarios from its dashboard panel and edits steps in its in-page editor;
- * the display page (screen.html) is marquee-only (its toolbar is hidden at
- * boot). Buttons that are not present on a given page are looked up
- * optionally and simply not wired.
+ * Both pages (index.html and screen.html) carry the identical toolbar.
+ * The dashboard role reveals it only while editing a step; the screen
+ * role hides it at boot, so its buttons are never used there.
  */
 declare class Toolbar {
     private readonly dom;
     private readonly btnPlay;
     private readonly btnStop;
     private readonly btnGenerate;
-    readonly btnSave: HTMLButtonElement;
-    readonly btnRecall: HTMLButtonElement;
-    readonly btnOption: HTMLButtonElement;
-    private readonly btnDashboard;
-    private readonly btnScenario;
     private readonly btnUpdateStep;
+    private readonly btnClose;
     constructor();
-    /** Looks up a toolbar button that is legitimately absent on some pages */
-    private static optional;
     /** Plays the current announcement through the speech engine */
     private handlePlay;
     private handlePlay2;
     private handleStop;
     private handleGenerate;
-    private handleSave;
-    private handleLoad;
-    private handleOption;
-    /**
-     * Captures the current announcement as a new step in the active scenario.
-     * The active scenario lives in localStorage (shared with the dashboard);
-     * if none is active yet, a fresh one is created and made active.
-     */
-    private handleCaptureStep;
     /**
      * Writes the current announcement back into the selected scenario step
-     * (the one opened for editing from the dashboard).
+     * (the one opened for editing from the dashboard), then closes the
+     * editor view to return to the scenario dashboard.
      */
     private handleUpdateStep;
+    /**
+     * Close request from the ✕ button: the dashboard closes straight away
+     * if the step has no unsaved changes, and asks first otherwise.
+     */
+    private handleClose;
 }
 /** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Manages UI elements and their logic */
@@ -1226,8 +1202,6 @@ declare class Views {
     readonly marquee: Marquee;
     /** Reference to the main settings screen */
     readonly settings: Settings;
-    /** Reference to the state picker screen */
-    readonly statePicker: StatePicker;
     /** Reference to the main toolbar component */
     readonly toolbar: Toolbar;
     /** References to all the pickers, one for each type of XML element */
@@ -1237,11 +1211,9 @@ declare class Views {
     getPicker(xmlTag: string): Picker;
     /**
      * Handle ESC: closes an open picker or the settings screen. With nothing
-     * else open, in the dashboard role it returns from the full-screen editor
-     * (the edit modal) to the dashboard panel — one layer per press, so
-     * dismissing a picker does not close the modal with it. The `editing`
-     * flag distinguishes the modal from #dashClose's deliberate "Hide panel",
-     * which ESC must not undo.
+     * else open, in the dashboard role it asks to leave the step editor view
+     * — the dashboard confirms first if there are unsaved changes. One layer
+     * per press, so dismissing a picker does not leave the editor with it.
      */
     private onInput;
 }

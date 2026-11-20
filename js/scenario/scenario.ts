@@ -222,15 +222,30 @@ class Scenario
                 this.finishStep(step.gapMs);
             };
 
-            // Watchdog: generous enough not to cut real speech short
-            // (~90ms/char, clamped to 6s..60s), but bounded so a hung engine
-            // can never stall the scenario.
-            let watchdogMs = Math.min(60000, Math.max(6000, text.length * 90));
-            clearTimeout(this.watchdog);
-            this.watchdog = window.setTimeout(() =>
+            // Watchdog: a backstop for a speech engine that never signals
+            // completion. VOX announcements run longer than the text-length
+            // estimate (clips plus pauses), so when the watchdog fires the
+            // engine may still be playing real audio: extend a few times in
+            // that case instead of cutting the announcement short. The bounded
+            // re-arms keep a hung engine from stalling the scenario forever.
+            let rearmLeft = 3;
+            let armWatchdog = (ms: number) =>
             {
-                this.finishStep(step.gapMs);
-            }, watchdogMs);
+                clearTimeout(this.watchdog);
+                this.watchdog = window.setTimeout(() =>
+                {
+                    let speaking = (typeof RAG !== 'undefined' && RAG.speech) ? RAG.speech.isSpeaking : false;
+                    if (speaking && rearmLeft > 0)
+                    {
+                        rearmLeft--;
+                        armWatchdog(30000);
+                        return;
+                    }
+                    this.finishStep(step.gapMs);
+                }, ms);
+            };
+            let watchdogMs = Math.min(60000, Math.max(6000, text.length * 90));
+            armWatchdog(watchdogMs);
 
             RAG.speech.speak(phraseEl);
         }

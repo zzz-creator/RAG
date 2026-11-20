@@ -13,7 +13,7 @@
     "typescript": "^3.0.1"
   },
   "scripts": {
-    "serve": "http-server -s -c-1 -r",
+    "serve": "http-server -s -c no-cache -r",
     "watch-tsc": "tsc -w",
     "watch-stylus": "stylus -m -w css/index.styl",
     "watch": "npm-run-all --parallel watch-tsc watch-stylus serve"

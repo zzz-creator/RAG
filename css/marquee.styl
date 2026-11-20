@@ -21,3 +21,28 @@
 
   > span
     position absolute
+
+// Screen role (screen.html): the board is the whole page, so it is bigger.
+// The text keeps the usual full scroll (nowrap + absolute span above).
+// Everything else on the page stays hidden, so only the board is visible.
+body.screenRole
+  #mainScreen
+    justify-content center
+
+  #marquee
+    font-size     72px
+    line-height   126px
+    min-height    158px
+    border-width  36px 36px 18px 36px
+    padding       0 36px
+
+  #disclaimerScreen, #tooSmallScreen
+    display none
+
+// The "screen too small" warning hides #mainScreen; the board alone fits a
+// short window, so the screen role keeps showing it
+@media (max-height 400px)
+  body.screenRole
+    #mainScreen
+      display flex
+      flex-direction column

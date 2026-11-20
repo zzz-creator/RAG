@@ -377,12 +377,25 @@ html {
 #marquee > span {
   position: absolute;
 }
+body.screenRole #mainScreen {
+  justify-content: center;
+}
 body.screenRole #marquee {
   font-size: 72px;
   line-height: 126px;
   min-height: 158px;
   border-width: 36px 36px 18px 36px;
   padding: 0 36px;
+}
+body.screenRole #disclaimerScreen,
+body.screenRole #tooSmallScreen {
+  display: none;
+}
+@media (max-height: 400px) {
+  body.screenRole #mainScreen {
+    display: flex;
+    flex-direction: column;
+  }
 }
 .picker {
   display: flex;

@@ -51,13 +51,15 @@ class RAG
         RAG.registerChannelHandlers();
 
         // The screen role (screen.html) is a marquee-only display; set it up
-        // before the welcome message so that first message is typed in
-        // instead of scrolled.
+        // before the welcome message so the board is ready for it.
         if (RAG.isScreenRole())
             RAG.setupDisplayRole();
 
-        // Begin
-        RAG.views.disclaimer.disclaim();
+        // Begin. The display board needs no click-through, so the disclaimer
+        // is skipped in the screen role.
+        if (!RAG.isScreenRole())
+            RAG.views.disclaimer.disclaim();
+
         RAG.views.marquee.set(L.WELCOME);
         RAG.generate();
 
@@ -84,11 +86,9 @@ class RAG
 
     /**
      * Screen role: this page is a marquee-only display. Hide the toolbar and
-     * the phrase editor so only the board is visible, and switch the marquee
-     * to the typewriter (messages type in from the left edge and hold,
-     * instead of scrolling away). Playback is driven over the channel
-     * (PLAY_* / WAIT_COUNTDOWN / STOP_PLAYBACK) and never speaks here, so the
-     * voice is not doubled.
+     * the phrase editor so only the board is visible. Playback is driven over
+     * the channel (PLAY_* / WAIT_COUNTDOWN / STOP_PLAYBACK) and never speaks
+     * here, so the voice is not doubled.
      */
     private static setupDisplayRole() : void
     {
@@ -99,8 +99,6 @@ class RAG
         let editor = document.getElementById('editor');
         if (editor)
             editor.style.display = 'none';
-
-        RAG.views.marquee.typewriter = true;
     }
 
     /**

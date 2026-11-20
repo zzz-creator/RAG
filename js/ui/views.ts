@@ -58,13 +58,26 @@ class Views
         return this.pickers[xmlTag];
     }
 
-    /** Handle ESC to close pickers or settigns */
+    /**
+     * Handle ESC: closes an open picker or the settings screen. With nothing
+     * else open, in the dashboard role it returns from the full-screen editor
+     * (the edit modal) to the dashboard panel — one layer per press, so
+     * dismissing a picker does not close the modal with it. The `editing`
+     * flag distinguishes the modal from #dashClose's deliberate "Hide panel",
+     * which ESC must not undo.
+     */
     private onInput(ev: KeyboardEvent) : void
     {
         if (ev.key !== 'Escape')
             return;
 
+        let layerOpen = !!document.querySelector('.picker:not([hidden])')
+            || !(document.getElementById('settingsScreen') as HTMLElement).hidden;
+
         this.editor.closeDialog();
         this.settings.close();
+
+        if (!layerOpen && RAG.isDashboardRole() && RAG.dashboard && RAG.dashboard.editing)
+            RAG.dashboard.closeEdit();
     }
 }

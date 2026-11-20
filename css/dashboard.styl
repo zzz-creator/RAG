@@ -1,0 +1,191 @@
+/** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
+
+#scenarioDashboard
+  pos()
+  size()
+  align-content flex-start
+  background    $bgDarkest
+  overflow-x    hidden
+  overflow-y    auto
+  position      absolute
+  z-index       500
+
+  > *
+    margin    0 auto
+    max-width 760px
+
+  button
+    standardButton()
+
+  h1
+    unselectable()
+    border-bottom  2px solid $fgFocus
+    font-size      xx-large
+    margin-bottom  8px
+    padding        16px
+    padding-bottom 8px
+
+  h2
+    unselectable()
+    border-bottom 1px solid $bgDarker
+    font-size     large
+    margin-bottom 8px
+    padding       8px
+    padding-bottom 4px
+
+  p, li
+    color $fgBright
+
+  a
+    color $fgFocus
+
+  .dash
+    padding-bottom 64px
+
+  .dash-row
+    flexbox()
+    align-items center
+    flex-wrap   wrap
+    gap         8px
+    margin      8px 0
+
+    > *
+      margin 0
+
+  .dash-field
+    display      inline-flex
+    align-items  center
+    gap          6px
+    font-size    medium
+    color        $fgBright
+
+    input
+      background      $bgDarker
+      border          none
+      box-shadow      0 0 4px $bgDarker inset
+      color           $fgBright
+      font-size       medium
+      padding         6px 8px
+      max-width       220px
+
+      &:focus
+        outline-offset 2px
+
+  ul
+    list-style  none
+    padding     0
+    margin      8px 0
+
+  .dash-scen
+    flexbox()
+    align-items center
+    justify-content space-between
+    background  $bgDarker
+    box-shadow  0 0 4px $bgDarker inset
+    color       $fgBright
+    cursor      pointer
+    margin      4px 0
+    padding     8px 12px
+
+    &:hover
+      background $bgDark
+
+    .dash-scen-meta
+      color     $fgDim
+      font-size smaller
+
+    &.active
+      backAndForeColor($bgDark, $fgFocus)
+      box-shadow 0 0 6px $fgFocus inset
+
+  .dash-hint
+    color $fgDim
+    font-size medium
+
+  .dash-steps
+    margin 8px 0
+
+  .dash-step
+    background  $bgDarker
+    box-shadow  0 0 4px $bgDarker inset
+    margin      8px 0
+    padding     8px
+
+    .dash-step-title
+      flexbox()
+      align-items     center
+      justify-content space-between
+      font-size       large
+      color           $fgBright
+
+      span:first-child
+        white-space nowrap
+
+    .dash-row
+      margin 8px 0 0
+
+    &.running
+      box-shadow 0 0 8px $fgFocus
+      background $bgDark
+
+      .dash-step-title
+        color $fgFocus
+
+  .dash-row-btns
+    display  inline-flex
+    gap      6px
+    margin-left auto
+
+  .dash-up, .dash-down, .dash-del
+    min-width  40px
+    padding    6px 10px
+
+  .dash-edit
+    padding 6px 12px
+
+  .dash-run
+    margin-top 16px
+
+  .dash-nowplaying
+    // Mirrors #marquee: an inner span is scrolled through the hidden
+    // overflow by JS (requestAnimationFrame in the dashboard role), so the
+    // line reads like the electronic board it stands in for
+    background    $bgDarker
+    box-shadow    0 0 4px $bgDarker inset
+    color         $fgBright
+    font-family   "5by7", sans-serif
+    font-size     48px
+    line-height   84px
+    margin        8px 0
+    min-height    96px
+    overflow      hidden
+    padding       0 24px
+    position      relative
+    unselectable()
+    white-space   nowrap
+
+    > span
+      position absolute
+
+  .dash-progress
+    flexbox()
+    align-items center
+    gap         12px
+    margin      8px 0
+
+    #dashProgressText
+      color     $fgBright
+      font-size medium
+      min-width 90px
+
+  .dash-progress-bar
+    background  $bgDarker
+    box-shadow  0 0 4px $bgDarker inset
+    flex        1
+    height      12px
+
+  .dash-progress-fill
+    background $fgFocus
+    height     100%
+    width      0
+    transition width 300ms ease

@@ -480,26 +480,11 @@ declare class Config extends ConfigBase<Config> {
     constructor(autoLoad?: boolean);
 }
 /** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
-interface DashBranch {
-    condition: string;
-    /** Meaning depends on condition: delay minutes, random percent, hour, platform text, service text */
-    threshold?: number | string;
-    /** Legacy: same as threshold for the random condition */
-    probability?: number;
-    target: number | 'end' | string;
-    /** Optional human label for the branch; unused by the runner */
-    label?: string;
-}
 interface DashStep {
     type: 'announcement' | 'wait';
     stateJson?: string;
     gapMs: number;
     waitSeconds?: number;
-    label?: string;
-    /** Ordered branches (if / elif): first match wins, none matching falls through (else) */
-    branches?: DashBranch[];
-    /** Legacy single branch; migrated to branches[] on load */
-    branch?: DashBranch;
 }
 interface DashScenario {
     id: string;
@@ -509,32 +494,15 @@ interface DashScenario {
     createdAt: number;
     updatedAt: number;
 }
-/** One selectable branch condition, and how its threshold input should read */
-interface DashBranchSpec {
-    id: string;
-    label: string;
-    input: string;
-    min?: string;
-    max?: string;
-    placeholder?: string;
-}
-/** Conditions the dashboard offers, in the order they appear in the editor */
-declare const DASH_BRANCH_CONDITIONS: DashBranchSpec[];
 declare class ScenarioDashboard {
     private storageKey;
     private scenarios;
     private currentId;
+    /** True while the edit modal is open. Distinguishes it from #dashClose, which also hides the panel — ESC must only close the modal, not undo a deliberate "Hide panel" */
+    editing: boolean;
     private panel;
     private progressTextEl;
     private progressFillEl;
-    /** Index of the step whose inline branch editor is open, or -1 when closed */
-    private branchEditorIdx;
-    /** Staged branches of the open editor (committed on "Save all") */
-    private branchEditorRows;
-    /** Condition preselected in the editor's "new branch" row */
-    private branchNewCond;
-    /** Heartbeat timer keeping the cross-tab playback lock fresh */
-    private playHeartbeat;
     /** Inner span of the now-playing line (the scroll target) */
     private nowPlayingSpan;
     /** rAF handle of the running now-playing scroll, 0 when idle */
@@ -544,6 +512,19 @@ declare class ScenarioDashboard {
     constructor();
     /** Shows the panel; called when this page is running in the dashboard role */
     open(): void;
+    /**
+     * Opens the in-page edit modal: hides the panel so the phrase editor on
+     * this same dashboard page is revealed full-screen. The panel's Play/
+     * Stop are the only speech triggers, so the voice is never doubled.
+     */
+    openEdit(): void;
+    /**
+     * Closes the in-page edit modal: re-shows the panel and re-reads the
+     * scenarios so any Capture/Update made from the editor is reflected.
+     * Safe to call when the panel is merely hidden via #dashClose: it just
+     * re-shows it.
+     */
+    closeEdit(): void;
     /**
      * Re-reads scenarios from localStorage and re-renders. Called after
      * anything writes the scenarios out from under this instance's in-
@@ -562,11 +543,10 @@ declare class ScenarioDashboard {
     private scrollNowPlaying;
     private loadAll;
     /**
-     * Migrate the legacy single branch onto branches[] and drop rows that
-     * are not usable at run time. Runs on load and import so the rest of
-     * the app only ever sees the ordered-list shape.
+     * Strips fields the app no longer uses (branching and step labels,
+     * removed 2026-11-14) so old saves and imports stay clean.
      */
-    private normalizeStepBranches;
+    private cleanStep;
     private saveAll;
     private current;
     /** Escapes user-entered text before it is interpolated into HTML */
@@ -576,13 +556,6 @@ declare class ScenarioDashboard {
     /** Plays a single step once (announcement or wait), then stops */
     private playStepOnly;
     private onPlaybackEnded;
-    /**
-     * Cross-tab lock. Other tabs (the editor role) read rag.playbackActive
-     * and react to the storage event; the heartbeat keeps the lock fresh so
-     * a closed dashboard tab cannot leave the editor locked forever.
-     */
-    private setPlaybackActive;
-    private playHeartbeatTick;
     /** Locks this tab's own main screen while a scenario is playing */
     private setEditingEnabled;
     private updateProgress;
@@ -590,20 +563,6 @@ declare class ScenarioDashboard {
     render(): void;
     private editorHtml;
     private stepHtml;
-    /** Human-readable one-liner shown next to the step title */
-    private branchSummary;
-    /** Resolves the spec for a condition id, falling back to the first one */
-    private specFor;
-    /** Copies one branch so staged edits cannot leak into the live step */
-    private copyBranch;
-    /** Seeds the editor's staged rows from a step's branches (or one blank row) */
-    private seedBranchRows;
-    private branchEditorHtml;
-    /**
-     * Target options: "end", every step by index, and every labelled step by
-     * label. Index options are stored 0-based; label options as the label.
-     */
-    private targetOptions;
     private bind;
     /**
      * Adds the live announcement as a new step. Prefers a sibling tab's state
@@ -613,15 +572,16 @@ declare class ScenarioDashboard {
      */
     private captureStep;
     private pushStep;
-    /** Opens the editor role in a new tab with this step loaded for editing */
+    /**
+     * Opens this step in the in-page edit modal: loads its announcement into
+     * the editor on this same dashboard page, then reveals it full-screen.
+     * "Update Step" writes back to this step — the keys set below are what
+     * it targets. No new tab, so the dashboard tab keeps owning the audio
+     * and the voice is never doubled.
+     */
     private editStep;
     private moveStep;
     private deleteStep;
-    /** Swaps a staged branch row with its neighbour (reorder priority) */
-    private moveBranchRow;
-    /** Validates every staged row; returns an error message or null when all are usable */
-    private branchRowsError;
-    private saveBranch;
     private exportJson;
     private importJson;
 }
@@ -808,27 +768,11 @@ declare class Phraser {
     process(container: HTMLElement, level?: number): void;
 }
 /** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
-/** One branch: a condition that, if met, jumps the run to a target */
-interface ScenarioBranch {
-    condition: 'delay' | 'random' | 'time' | 'platform' | 'service';
-    /** Meaning depends on condition: delay minutes, random percent, hour, platform text, service text */
-    threshold?: number | string;
-    /** Legacy: same as threshold for the random condition */
-    probability?: number;
-    target: number | 'end' | string;
-    /** Optional human label for the branch ("if delay >= 5"); unused by the runner */
-    label?: string;
-}
 interface ScenarioStep {
     type: 'announcement' | 'wait';
     stateJson?: string;
     gapMs: number;
     waitSeconds?: number;
-    label?: string;
-    /** Ordered branches (if / elif): the first match wins, none matching falls through (else) */
-    branches?: ScenarioBranch[];
-    /** Legacy single branch; migrated to branches[] on load, still honoured at run time */
-    branch?: ScenarioBranch;
 }
 declare class Scenario {
     private steps;
@@ -874,18 +818,8 @@ declare class Scenario {
      */
     private finishStep;
     private advance;
-    /**
-     * Jumps the run to a branch target ('end', an index, or a label).
-     * Returns true if the jump landed; an unusable target (wrong type) makes
-     * the caller fall through to the next step instead (no stall). A label
-     * that matches no step goes to the end of the scenario.
-     */
-    private jumpTo;
-    private evalBranch;
     /** Broadcast a playback event to the other tabs (the editor mirrors it, display-only) */
     private broadcast;
-    /** Coerces a threshold (number or numeric string) to a number, else the fallback */
-    private static numThreshold;
 }
 /** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
 /** Utility class for resolving a given phrase to vox keys */
@@ -1239,10 +1173,11 @@ declare class StatePicker extends ViewBase {
 /**
  * Controller for the top toolbar.
  *
- * The toolbar differs per page: the editor page (index.html) has no run button
- * because playback is controlled from the dashboard; the dashboard page
- * (dashboard.html) runs scenarios from its own panel. Buttons that are not
- * present on a given page are looked up optionally and simply not wired.
+ * The toolbar differs per page: the terminal page (index.html) runs
+ * scenarios from its dashboard panel and edits steps in its in-page editor;
+ * the display page (screen.html) is marquee-only (its toolbar is hidden at
+ * boot). Buttons that are not present on a given page are looked up
+ * optionally and simply not wired.
  */
 declare class Toolbar {
     private readonly dom;
@@ -1300,7 +1235,14 @@ declare class Views {
     constructor();
     /** Gets the picker that handles a given tag, if any */
     getPicker(xmlTag: string): Picker;
-    /** Handle ESC to close pickers or settigns */
+    /**
+     * Handle ESC: closes an open picker or the settings screen. With nothing
+     * else open, in the dashboard role it returns from the full-screen editor
+     * (the edit modal) to the dashboard panel — one layer per press, so
+     * dismissing a picker does not close the modal with it. The `editing`
+     * flag distinguishes the modal from #dashClose's deliberate "Hide panel",
+     * which ESC must not undo.
+     */
     private onInput;
 }
 /** Rail Announcements Generator. By zzz-creator, MIT license, 2018 */
@@ -1573,6 +1515,12 @@ interface DataRefs {
     servicesData: string[];
     /** Raw dictionary of station codes and names to use */
     stationsData: Dictionary<string>;
+    /**
+     * Role the page boots in, set by the page's boot script: 'dashboard'
+     * (controller) or 'editor' (main screen). When absent, the role falls
+     * back to the URL flag (index.html?dashboard=1).
+     */
+    bootRole?: string;
 }
 /** Fill ins for various missing definitions of modern Javascript features */
 interface Window {
@@ -1713,24 +1661,25 @@ declare class RAG {
     static dashboard: ScenarioDashboard;
     /** Cross-window messaging channel */
     static channel: ScenarioChannel;
+    /** Role this page booted in ('dashboard' / 'editor'), from the boot script */
+    static bootRole: string;
     /**
      * Entry point for RAG, to be called from Javascript.
      *
      * @param dataRefs Configuration object, with rail data to use
      */
     static main(dataRefs: DataRefs): void;
-    /** True when this page was opened as the dashboard (controller) view */
-    private static isDashboardRole;
+    /** True when this page booted in the dashboard (terminal) role */
+    static isDashboardRole(): boolean;
+    /** True when this page booted in the screen (display) role */
+    static isScreenRole(): boolean;
     /**
-     * Editor role: if the dashboard asked to edit a specific step, load that
-     * step's announcement into the editor and point "Update Step" at it.
+     * Screen role: this page is a marquee-only display. Hide the toolbar and
+     * the phrase editor so only the scrolling board is visible; playback is
+     * driven over the channel (PLAY_* / WAIT_COUNTDOWN / STOP_PLAYBACK) and
+     * never speaks here, so the voice is not doubled.
      */
-    private static applyEditRequest;
-    /**
-     * Editor role: pause editing while a scenario is playing in another tab.
-     * The dashboard tab sets rag.playbackActive; we react to it live.
-     */
-    private static bindPlaybackGate;
+    private static setupDisplayRole;
     /**
      * Editor role: mirror a step the dashboard is running into the marquee.
      * Display-only on purpose: the dashboard tab owns the audio, and speaking

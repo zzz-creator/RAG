@@ -21,6 +21,8 @@ class RAG
     public static dashboard : ScenarioDashboard;
     /** Cross-window messaging channel */
     public static channel   : ScenarioChannel;
+    /** Role this page booted in ('dashboard' / 'editor'), from the boot script */
+    public static bootRole  : string = '';
 
     /**
      * Entry point for RAG, to be called from Javascript.
@@ -31,6 +33,8 @@ class RAG
     {
         window.onerror              = error => RAG.panic(error);
         window.onunhandledrejection = error => RAG.panic(error);
+
+        RAG.bootRole = dataRefs.bootRole || '';
 
         I18n.init();
 
@@ -54,105 +58,43 @@ class RAG
         // Ping dashboard if open
         RAG.channel.send('PONG', { stateJson: JSON.stringify(RAG.state) });
 
-        // Determine this page's role. The dashboard role is the controller
-        // (build / manage / run); the editor role is the main page (display +
-        // step editing). Both are the same app, distinguished by the URL.
+        // Determine this page's role. The dashboard role (index.html) is the
+        // terminal: build / manage / run scenarios and edit steps in its
+        // in-page editor. The screen role (screen.html) is a marquee-only
+        // display that mirrors playback over the channel.
         if (RAG.isDashboardRole())
             RAG.dashboard.open();
-        else
-        {
-            RAG.applyEditRequest();
-            RAG.bindPlaybackGate();
-        }
+        else if (RAG.isScreenRole())
+            RAG.setupDisplayRole();
     }
 
-    /** True when this page was opened as the dashboard (controller) view */
-    private static isDashboardRole() : boolean
+    /** True when this page booted in the dashboard (terminal) role */
+    public static isDashboardRole() : boolean
     {
-        let search = window.location.search || '';
-        let hash   = window.location.hash   || '';
-        return search.indexOf('dashboard=1') !== -1 || hash.indexOf('dashboard') !== -1;
+        return RAG.bootRole === 'dashboard';
     }
 
-    /**
-     * Editor role: if the dashboard asked to edit a specific step, load that
-     * step's announcement into the editor and point "Update Step" at it.
-     */
-    private static applyEditRequest() : void
+    /** True when this page booted in the screen (display) role */
+    public static isScreenRole() : boolean
     {
-        if (window.localStorage.getItem('rag.editRequest') !== '1')
-            return;
-
-        window.localStorage.removeItem('rag.editRequest');
-
-        let id     = window.localStorage.getItem('rag.currentScenarioId');
-        let idxStr = window.localStorage.getItem('rag.selectedStepIndex');
-        if (!id || idxStr === null)
-            return;
-
-        let idx = parseInt(idxStr);
-        let raw = window.localStorage.getItem('rag.scenarios');
-        if (!raw)
-            return;
-
-        let scenarios = JSON.parse(raw) as Array<{ id: string; name: string; steps: Array<{ stateJson?: string }> }>;
-        let sc   = scenarios.find(s => s.id === id);
-        let step = (sc && sc.steps[idx]) ? sc.steps[idx] : null;
-        if (!step || !step.stateJson)
-            return;
-
-        RAG.load(step.stateJson);
-        RAG.views.marquee.set('Editing step ' + (idx + 1) + ' of "' + sc!.name + '". Make your changes, then click "Update Step" to save them back.');
+        return RAG.bootRole === 'screen';
     }
 
     /**
-     * Editor role: pause editing while a scenario is playing in another tab.
-     * The dashboard tab sets rag.playbackActive; we react to it live.
+     * Screen role: this page is a marquee-only display. Hide the toolbar and
+     * the phrase editor so only the scrolling board is visible; playback is
+     * driven over the channel (PLAY_* / WAIT_COUNTDOWN / STOP_PLAYBACK) and
+     * never speaks here, so the voice is not doubled.
      */
-    private static bindPlaybackGate() : void
+    private static setupDisplayRole() : void
     {
-        let apply = (active: boolean) =>
-        {
-            if (!RAG.views)
-                return;
+        let toolbar = document.getElementById('toolbar');
+        if (toolbar)
+            toolbar.style.display = 'none';
 
-            RAG.views.main.style.pointerEvents = active ? 'none' : '';
-            let toolbar = document.getElementById('toolbar');
-            if (toolbar)
-                toolbar.style.pointerEvents = active ? 'none' : '';
-        };
-
-        let check = () =>
-        {
-            let active = window.localStorage.getItem('rag.playbackActive') === '1';
-            if (active)
-            {
-                // The dashboard tab refreshes this heartbeat while it is
-                // alive; a stale stamp means it closed (or crashed) mid-
-                // playback, so release the lock instead of holding the
-                // editor hostage forever.
-                let since = parseInt(window.localStorage.getItem('rag.playbackSince') || '0', 10);
-                if (Date.now() - since > 15 * 1000)
-                {
-                    window.localStorage.removeItem('rag.playbackActive');
-                    window.localStorage.removeItem('rag.playbackSince');
-                    active = false;
-                }
-            }
-            apply(active);
-        };
-
-        check();
-
-        window.addEventListener('storage', (e: StorageEvent) =>
-        {
-            if (e.key === 'rag.playbackActive' || e.key === 'rag.playbackSince')
-                check();
-        });
-
-        // Storage events only fire on a write; a dead dashboard tab stops
-        // writing, so also re-check on a timer to catch a stale lock.
-        window.setInterval(check, 5 * 1000);
+        let editor = document.getElementById('editor');
+        if (editor)
+            editor.style.display = 'none';
     }
 
     /**

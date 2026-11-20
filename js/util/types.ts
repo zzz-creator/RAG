@@ -34,6 +34,12 @@ interface DataRefs
     servicesData   : string[];
     /** Raw dictionary of station codes and names to use */
     stationsData   : Dictionary<string>;
+    /**
+     * Role the page boots in, set by the page's boot script: 'dashboard'
+     * (controller) or 'editor' (main screen). When absent, the role falls
+     * back to the URL flag (index.html?dashboard=1).
+     */
+    bootRole?      : string;
 }
 
 /** Fill ins for various missing definitions of modern Javascript features */

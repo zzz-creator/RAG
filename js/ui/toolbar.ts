@@ -3,10 +3,11 @@
 /**
  * Controller for the top toolbar.
  *
- * The toolbar differs per page: the editor page (index.html) has no run button
- * because playback is controlled from the dashboard; the dashboard page
- * (dashboard.html) runs scenarios from its own panel. Buttons that are not
- * present on a given page are looked up optionally and simply not wired.
+ * The toolbar differs per page: the terminal page (index.html) runs
+ * scenarios from its dashboard panel and edits steps in its in-page editor;
+ * the display page (screen.html) is marquee-only (its toolbar is hidden at
+ * boot). Buttons that are not present on a given page are looked up
+ * optionally and simply not wired.
  */
 class Toolbar
 {
@@ -40,7 +41,19 @@ class Toolbar
         this.btnSave.onclick     = this.handleSave.bind(this);
         this.btnRecall.onclick   = this.handleLoad.bind(this);
         this.btnOption.onclick   = this.handleOption.bind(this);
-        if (this.btnDashboard) this.btnDashboard.onclick = () => window.open('index.html?dashboard=1', '_blank');
+        if (this.btnDashboard)
+        {
+            this.btnDashboard.onclick = () =>
+            {
+                // If the in-page edit modal is open, close it (re-show the
+                // dashboard panel). Otherwise open the marquee-only display
+                // page in a new tab.
+                if (RAG.dashboard && RAG.dashboard.editing)
+                    RAG.dashboard.closeEdit();
+                else
+                    window.open('screen.html', '_blank');
+            };
+        }
         this.btnScenario.onclick = this.handleCaptureStep.bind(this);
         if (this.btnUpdateStep) this.btnUpdateStep.onclick = this.handleUpdateStep.bind(this);
 

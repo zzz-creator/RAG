@@ -81,6 +81,9 @@
     <script type="application/javascript">
       // Eventually, the editor will re-apply this message with localization
       document.body.classList.add('javascriptEnabled');
+      // Marks the display page so CSS can make the board bigger; the
+      // dashboard (index.html) keeps its smaller scrolling board.
+      document.body.classList.add('screenRole');
       document.querySelector('#marquee').innerText = 'Please wait...';
       document.querySelector('#editor').innerText = 'Please wait...';
     </script>

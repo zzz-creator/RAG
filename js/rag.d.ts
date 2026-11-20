@@ -1106,14 +1106,30 @@ declare class Marquee {
     private timer;
     /** Current offset (in pixels) of the scrolling marquee */
     private offset;
+    /** True while a typewriter animation is revealing characters */
+    private typing;
+    /**
+     * When true, new messages are typed in character by character and hold
+     * in place until replaced, instead of scrolling across the board.
+     * Enabled for the screen (display) role only; the dashboard and editor
+     * keep the scrolling.
+     */
+    typewriter: boolean;
     constructor();
-    /** Sets the message on the scrolling marquee, and starts animating it */
+    /** Sets the message on the marquee, and starts animating it */
     set(msg: string, animate?: boolean): void;
     /**
-     * Swap in new text without restarting the scroll. While the marquee is
-     * already scrolling, the new text takes over in place (used for wait
+     * Types the message in character by character (60ms per character),
+     * starting from the left edge. When the last character lands, the text
+     * holds in place until the next set() or setSoft() replaces it.
+     */
+    private type;
+    /**
+     * Swap in new text without restarting the animation. While the marquee is
+     * already animating, the new text takes over in place (used for wait
      * countdown ticks, so they don't jump back to the right edge every
-     * second); otherwise it behaves like a fresh set().
+     * second); an active typewriter is cancelled first, so its frames don't
+     * overwrite the new text; otherwise it behaves like a fresh set().
      */
     setSoft(msg: string): void;
     /** Stops the current marquee animation */
@@ -1647,9 +1663,11 @@ declare class RAG {
     static isScreenRole(): boolean;
     /**
      * Screen role: this page is a marquee-only display. Hide the toolbar and
-     * the phrase editor so only the scrolling board is visible; playback is
-     * driven over the channel (PLAY_* / WAIT_COUNTDOWN / STOP_PLAYBACK) and
-     * never speaks here, so the voice is not doubled.
+     * the phrase editor so only the board is visible, and switch the marquee
+     * to the typewriter (messages type in from the left edge and hold,
+     * instead of scrolling away). Playback is driven over the channel
+     * (PLAY_* / WAIT_COUNTDOWN / STOP_PLAYBACK) and never speaks here, so the
+     * voice is not doubled.
      */
     private static setupDisplayRole;
     /**

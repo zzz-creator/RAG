@@ -50,6 +50,12 @@ class RAG
         // Register cross-window listeners on main index.html page
         RAG.registerChannelHandlers();
 
+        // The screen role (screen.html) is a marquee-only display; set it up
+        // before the welcome message so that first message is typed in
+        // instead of scrolled.
+        if (RAG.isScreenRole())
+            RAG.setupDisplayRole();
+
         // Begin
         RAG.views.disclaimer.disclaim();
         RAG.views.marquee.set(L.WELCOME);
@@ -58,14 +64,10 @@ class RAG
         // Ping dashboard if open
         RAG.channel.send('PONG', { stateJson: JSON.stringify(RAG.state) });
 
-        // Determine this page's role. The dashboard role (index.html) is the
-        // terminal: build / manage / run scenarios and edit steps in its
-        // in-page editor. The screen role (screen.html) is a marquee-only
-        // display that mirrors playback over the channel.
+        // The dashboard role (index.html) is the terminal: build / manage /
+        // run scenarios and edit steps in its in-page editor.
         if (RAG.isDashboardRole())
             RAG.dashboard.open();
-        else if (RAG.isScreenRole())
-            RAG.setupDisplayRole();
     }
 
     /** True when this page booted in the dashboard (terminal) role */
@@ -82,9 +84,11 @@ class RAG
 
     /**
      * Screen role: this page is a marquee-only display. Hide the toolbar and
-     * the phrase editor so only the scrolling board is visible; playback is
-     * driven over the channel (PLAY_* / WAIT_COUNTDOWN / STOP_PLAYBACK) and
-     * never speaks here, so the voice is not doubled.
+     * the phrase editor so only the board is visible, and switch the marquee
+     * to the typewriter (messages type in from the left edge and hold,
+     * instead of scrolling away). Playback is driven over the channel
+     * (PLAY_* / WAIT_COUNTDOWN / STOP_PLAYBACK) and never speaks here, so the
+     * voice is not doubled.
      */
     private static setupDisplayRole() : void
     {
@@ -95,6 +99,8 @@ class RAG
         let editor = document.getElementById('editor');
         if (editor)
             editor.style.display = 'none';
+
+        RAG.views.marquee.typewriter = true;
     }
 
     /**
